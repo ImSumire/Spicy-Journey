@@ -36,9 +36,8 @@ Perlin Noise is well known for its use in the generation of Minecraft worlds as 
 - ϟ Optimization
 ## License ©
 
-➩ [MIT](https://choosealicense.com/licenses/mit/)
-
-<h5> MIT License
+<details close>
+<summary> MIT License </summary>
 
 Copyright (c) 2022
 
@@ -58,7 +57,11 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE. </h5>
+SOFTWARE. 
+
+https://choosealicense.com/licenses/mit/
+</h5></details>
+
 ## Authors
 
 - [@ImGalaad](https://www.github.com/ImGalaad) and [@Zecyl](https://www.github.com/Zecyl)

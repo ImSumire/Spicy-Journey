@@ -2,7 +2,7 @@
 
 <hr>
 
-![Software Screenshot](https://raw.githubusercontent.com/violettttte/map-generator-python/main/illustration.png)
+![Software Screenshot](https://raw.githubusercontent.com/Violettttte/Atlas/main/images/illustration.png)
 
 
 <b>Atlas</b> is a very simple program that procedurally generates a map with a random seed.
@@ -32,7 +32,9 @@ Lower computational complexity, cost and fewer multiplications makes the a very 
 #### Wikipedia Links
 
 > https://en.wikipedia.org/wiki/Simplex_noise
+> 
 > https://en.wikipedia.org/wiki/Perlin_noise
+> 
 > https://en.wikipedia.org/wiki/Ken_Perlin
 
 <u>We recommend this video which helped us a lot to understand how to generate a terrain :</u>

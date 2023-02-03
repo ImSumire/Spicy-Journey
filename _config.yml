@@ -1,14 +1,21 @@
 # Title
 title: Atlas
 
-# Global pixel size varibals on the canvas
-dimensions :
-  scale: 2
-  hp: 256
-  wp: 256
+game :
+  # Global window size variables
+  dimensions :
+    width: 850
+    height: 600
+  fps: 60
 
-# Color palette for the window
-background: '#262626'
-primaryColor: '#2e2e2e'
-
-white: '#ffffff'
+software :
+  # Global pixel size variables on the canvas
+  dimensions :
+    scale: 2
+    hp: 256
+    wp: 256
+  # Color palette for the window
+  colors :
+    background : '#262626'
+    primaryColor: '#2e2e2e'
+    white: '#ffffff'

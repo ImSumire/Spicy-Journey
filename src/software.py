@@ -1,8 +1,7 @@
 from random import choice
 from tkinter import *
-import save
 from time import time
-from src.noise import *
+from src.snoise import *
 
 __inspiration__ = "https://azgaar.github.io/Fantasy-Map-Generator/"
 
@@ -16,44 +15,24 @@ __inspiration__ = "https://azgaar.github.io/Fantasy-Map-Generator/"
 import yaml
 
 # Open the configuration file
-with open('_config.yml', 'r') as config_file:
-  # Parse the YAML in the file
-  config = yaml.safe_load(config_file)
+with open("_config.yml", "r") as config_file:
+    # Parse the YAML in the file
+    config = yaml.safe_load(config_file)
 
 # Title
-title = config['title']
+title = config["title"]
 
 # Global pixel size varibals on the canvas
-
-scale = config['dimensions']['scale']
-hp, wp = config['dimensions']['hp'], config['dimensions']['wp']
+scale = config["software"]["dimensions"]["scale"]
+hp = config["software"]["dimensions"]["hp"]
+wp = config["software"]["dimensions"]["wp"]
 h, w = hp * scale, wp * scale
 
 # Color palette for the window
-background = config['background']
-primaryColor = config['primaryColor']
+background = config["software"]["colors"]["background"]
+primaryColor = config["software"]["colors"]["primaryColor"]
 
-white = config['white']
-
-
-"""
-Todos :
-                                    State
-    Fix bugs/errors :          ■■■■■■◧□□□□□□ 50%
-    Size support :                    x
-    Display styles :                  x
-    Generation of structures : □□□□□□□□□□□□□ 0%
-    Generation seed :          ■■■■■■■■■■◧□□ 81%
-    Optimization :             ■■■■■■■■■■■■◧ 95%
-
-Menus :
-                                    Symbol
-    Creation                          🌏
-    Save/Load                         📁
-    Display                           🪄
-    Debug                             🔧
-
-"""
+white = config["software"]["colors"]["white"]
 
 
 ### Function to apply colors to the different regions of the map
@@ -78,11 +57,13 @@ def height(h):  # Sand [156, 145, 93]
 def brighten(color, rate):
     return "#%02x%02x%02x" % (color[0] + rate, color[1] + rate, color[2] + rate)
 
+
 #     ___             ___          __  _
 #    / _ | ___  ___  / (_)______ _/ /_(_)__  ___
 #   / __ |/ _ \/ _ \/ / / __/ _ `/ __/ / _ \/ _ \
 #  /_/ |_/ .__/ .__/_/_/\__/\_,_/\__/_/\___/_//_/
 #       /_/  /_/
+
 
 class App:
     def __init__(self):
@@ -98,9 +79,7 @@ class App:
     def open(self):
         # Creation of the widget to put under the canva
         self.infos = StringVar()
-        self.label = Label(
-            self.app, textvariable=self.infos, bg=background, fg=white
-        )
+        self.label = Label(self.app, textvariable=self.infos, bg=background, fg=white)
         self.infos.set("Height :\nx :     y :")
         self.label.pack(side=BOTTOM, padx=5, pady=5)
 
@@ -112,10 +91,10 @@ class App:
         tools_menu = Menu(menubar, tearoff=0)
 
         for cascade in [
-            (creation_menu, ' Creation '),
-            (save_menu, ' Save '),
-            (style_menu, ' Style '),
-            (tools_menu, ' Tools ')
+            (creation_menu, " Creation "),
+            (save_menu, " Save "),
+            (style_menu, " Style "),
+            (tools_menu, " Tools "),
         ]:
             menubar.add_cascade(menu=cascade[0], label=cascade[1])
 
@@ -135,8 +114,6 @@ class App:
         style_menu.add_command(label="Layers")
 
         tools_menu.add_command(label="Switch debug mode", command=self.debug_mode)
-
-
 
         self.app.config(menu=menubar)
 

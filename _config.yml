@@ -4,9 +4,9 @@ title: Atlas
 game :
   # Global window size variables
   dimensions :
-    width: 850
-    height: 600
-  fps: 60
+    width: 1280
+    height: 700
+  fps: 120
 
 software :
   # Global pixel size variables on the canvas

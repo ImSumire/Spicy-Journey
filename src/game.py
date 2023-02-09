@@ -34,6 +34,11 @@ screen_size = screen.get_size()
 # Allow only certains events
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
 
+screen_size = screen.get_size()
+
+# Allow only certains events
+pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
+
 # Creation of the clock to recover the fps and block them
 clock = pygame.time.Clock()
 

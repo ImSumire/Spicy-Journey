@@ -1,39 +1,50 @@
 # 🛠 Changelog
 
-__Icons__ : ➕🗑🪄🐛
-
 <hr>
 
 #### To-do list 📋
-##### Global :
-- [ ] Remake the whole `README.md`
-##### Software :
-- [x] Generation seed : new seed for each reload
-- [ ] Size support (will be worked on if the saving principle is put in place)
-- [x] Optimization (use of `snoise2`)
-- [ ] Display styles (change the color palette of the map)
-- [ ] Generation of structures for a better simulation
 ##### Game :
-- [ ] Playable, like a mini survival game or exploration game (will be published on github.com/ImGalaad/Journey)
-- [ ] Huge optimization, reduce lag when the camera display a massive forest (a lot of images)
+- [ ] Playable, exploration game, collection of ingredients to be able to cook
+- [x] Huge optimization, reduce lag when the camera display a massive forest (a lot of images)
 - [ ] Custom sprites (currently with free sprites from the internet, rafaelmatos.itch.io/epic-rpg-world-pack-free-demoancient-ruins)
 - [ ] More vibrante colors for a greater looking
-- [ ] Make a better terrain generation
-- [ ] Generation of structures for a better simulation
+- [ ] Make a better terrain generation, add mountains and rivers
+- [ ] Generation of structures/ingredients/plants for a better simulation
+- [ ] Add the fishing system to cook fish
 
 <hr>
+
+## [0.1.5] - 2023-03-04
+
+### _main_ - Playable update
+##### Added ➕
+- Added `config.json` for much faster reading of configurations.
+- Adding documentation/explanations in the `main.py`.
+- Added `requirements.txt`.
+- Added all the sprites of the player in `res/sprites/Characters`.
+- Added leaf particles to make the game more beautiful.
+- Added random world system.
+- Added player animations
+- Added the "smooooth" moves.
+- Added support for AZERTY and QWERTY keyboards by clicking `k`.
+##### Changed 🪄
+- Moved everything related to the base application on Tkinter to the `old` folder, there is no more will to update.
+- Global modification of the `terrain.py` file for a better compatibility of the world generation.
+##### Removed 🗑
+- The `_config.yml` file has been deleted
+
 
 ## [0.1.4] - 2023-02-09
 
 ### _Game_ - Movement update
-##### Added  ➕
+##### Added ➕
 - Better organization of imports in the `game.py` file
 - Changed name `Camera` -> `Player` for an obvious reason of a change of the move
 
 ## [0.1.3] - 2023-02-04
 
 ### _Game_ - Optimization update
-##### Added  ➕
+##### Added ➕
 - Added `memoize` decorator that applies a cache write to greatly optimize noise calculations
 - Added 'lazy' mode to avoid recalculating everything at each frame, activated when the player is not moving
 - Added `screen_size` variable to avoid re-calling `screen.get_size()`

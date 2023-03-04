@@ -2,7 +2,7 @@
 
 <hr>
 
-![Game Screenshot](https://raw.githubusercontent.com/IamGalaad/Atlas/main/res/example.png)
+![Game Screenshot](https://raw.githubusercontent.com/ImGalaad/Atlas/main/res/example.png)
 
 
 Introducing Atlas, the game that will help you unwind and relax as you explore a procedurally generated world filled with lush forests. With its isometric viewpoint and pixel art style, Atlas is a retro-visually game that is sure to captivate you.

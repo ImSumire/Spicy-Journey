@@ -52,14 +52,13 @@ Lower computational complexity, cost and fewer multiplications makes the a very 
 
 ## To Do 📋
 
-- 🐛 Remove bugs/errors :
-■■■■■□□□□□ 50%
-<i>For the moment there are no bugs discovered but we leave it for the next versions</i>
-- ⚡️ Optimization :
-■■■■■■■■■■□ 95%
-- 📐 Support for the size of the open file
-- 🎨 Enable/Disable biome overlay
-- 📏 Choice the map size at the creation
+- [ ] Playable, exploration game, collection of ingredients to be able to cook
+- [x] Huge optimization, reduce lag when the camera display a massive forest (a lot of images)
+- [ ] Custom sprites (currently with free sprites from the internet, rafaelmatos.itch.io/epic-rpg-world-pack-free-demoancient-ruins)
+- [ ] More vibrante colors for a greater looking
+- [ ] Make a better terrain generation, add mountains and rivers
+- [ ] Generation of structures/ingredients/plants for a better simulation
+- [ ] Add the fishing system to cook fish
 
 <hr>
 
@@ -71,16 +70,10 @@ Lower computational complexity, cost and fewer multiplications makes the a very 
 pip install --upgrade pip
 ```
 
-#### Tkinter
-<i>This library is extremely important, all the display is based on</i>
+#### Libs
+<i>Install Pygame, noise, pyyaml, and json: </i>
 ```
-pip install tk
-```
-
-#### Yml
-<i>This library is important because it is used to load the settings of _config.yml</i>
-```
-pip install pyyaml
+pip install -r requirements.txt
 ```
 
 <hr>
@@ -100,6 +93,9 @@ The Software is provided “as is”, without warranty of any kind, express or i
 <hr>
 
 ## Authors
+#### Game
+- [@ImGalaad](https://github.com/ImGalaad) Project creator and all the code for the moment
 
-- [@violettttte](https://github.com/violettttte) Project creator, User-Interface management (Tkinter), running optimization and file organization
+#### Software
+- [@ImGalaad](https://github.com/ImGalaad) Project creator, User-Interface management (Tkinter), running optimization and file organization
 - [@Zecyl](https://www.github.com/Zecyl) Ideas and project development, Perlin Noise handling, and early versions of save/load processing

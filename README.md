@@ -1,13 +1,20 @@
-# Atlas - Python World Maker 🧭
+# Atlas - Exploration of the wilderness 🧭
 
 <hr>
 
-![Software Screenshot](https://raw.githubusercontent.com/Violettttte/Atlas/main/images/illustration.png)
+![Game Screenshot](https://raw.githubusercontent.com/IamGalaad/Atlas/main/res/example.png)
 
 
-<b>Atlas</b> is a very simple program that procedurally generates a map with a random seed.
+Introducing Atlas, the game that will help you unwind and relax as you explore a procedurally generated world filled with lush forests. With its isometric viewpoint and pixel art style, Atlas is a retro-visually game that is sure to captivate you.
 
-We use the Simplex Noise to make this natural overview.
+With its procedurally generated world, Atlas offers endless opportunities for exploration and discovery. No two games will be the same, so you can keep coming back to Atlas again and again for a new and exciting experience.
+
+So if you're looking for a game that will help you relax and unwind, look no further than Atlas. With its beautiful forests, charming pixel art style, and endless possibilities for exploration, it's the perfect game for anyone looking to escape into a peaceful and immersive world.
+
+<hr>
+
+## Why Pygame?
+Because it is a beautifully optimized and much more complete library, and quite low-level compared to Raylib and Arcade Pyglet. Moreover, it is in the computer science speciality program in high school. And moreover the next versions of Pygame will use SDL2 which greatly improves the speed of calculation and display by using also the GPU (11x faster)
 
 <hr>
 

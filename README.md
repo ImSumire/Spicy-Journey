@@ -47,9 +47,9 @@ Lower computational complexity, cost and fewer multiplications makes the a very 
 
 - 🐛 Remove bugs/errors :
 ■■■■■□□□□□ 50%
+<i>For the moment there are no bugs discovered but we leave it for the next versions</i>
 - ⚡️ Optimization :
 ■■■■■■■■■■□ 95%
-<i>For the moment there are no bugs discovered but we leave it for the next versions</i>
 - 📐 Support for the size of the open file
 - 🎨 Enable/Disable biome overlay
 - 📏 Choice the map size at the creation

@@ -1,8 +1,8 @@
 """
          ______  ______  __      ______  ______
-        /\  __ \/\__  _\/\ \    /\  __ \/\  ___\ 
-        \ \  __ \/_/\ \/\ \ \___\ \  __ \ \___  \ 
-         \ \_\ \_\ \ \_\ \ \_____\ \_\ \_\/\_____\ 
+        /\  __ \/\__  _\/\ \    /\  __ \/\  ___\
+        \ \  __ \/_/\ \/\ \ \___\ \  __ \ \___  \
+         \ \_\ \_\ \ \_\ \ \_____\ \_\ \_\/\_____\
           \/_/\/_/  \/_/  \/_____/\/_/\/_/\/_____/
 """
 #
@@ -37,17 +37,17 @@
 from time import perf_counter
 
 import sys
-from math import fmod
 import json
 
 
 import pygame
 from pygame.locals import *
-import pygame.gfxdraw
 
 from src.player import Player
 from src.terrain import Terrain
 from src.leaf import Leaf
+from src.button import Button
+from src.fade import Fade
 
 # Load the configuration file using the json lib
 with open("config.json") as f:
@@ -58,6 +58,7 @@ WIDTH = config["game"]["dimensions"]["width"]
 HEIGHT = config["game"]["dimensions"]["height"]
 FPS = config["game"]["fps"]
 TITLE = config["title"]
+CENTER = (WIDTH // 2, HEIGHT // 2)
 
 #  __  __   __  __  ______
 # /\ \/\ "-.\ \/\ \/\__  _\
@@ -70,25 +71,40 @@ TITLE = config["title"]
 pygame.init()
 pygame.display.set_caption(TITLE)  # 'Atlas'
 screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)  # (1280, 700)
-display = pygame.Surface((WIDTH // 2, HEIGHT // 2))  # (640, 350)
+display = pygame.Surface(CENTER)  # (640, 350)
 clock = pygame.time.Clock()
 tick = 0
 
 # Basics instances
-terrain = Terrain(0.08, WIDTH, HEIGHT)  # 0.08
+terrain = Terrain(WIDTH, HEIGHT)
+print("Seed :", terrain.seed)
 player = Player((0, 0))
 
 # Debug
-font = pygame.font.Font(None, 25)
+font = pygame.font.Font("res/font/8-bit.ttf", 12)
 debug = False
 
 # Aesthetic
 leaves = [Leaf(0.2, 0.5, HEIGHT) for i in range(100)]
+fade = Fade(WIDTH, HEIGHT)
 bloom = True
+
+
+def test():
+    print("Start Game")
+
+
+# GUI
+buttons = [Button("Play", font, 80, 20, CENTER, test)]
+
+temp = 0
+
 
 def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            global temp, tick
+            print("Second per frame (average) :", temp / tick)
             pygame.quit()
             sys.exit()
 
@@ -98,12 +114,15 @@ def handle_events():
                 debug = not debug
 
             elif event.key == pygame.K_m:
-                terrain.temp -= 1
+                terrain.temp -= 0.25
                 print(terrain.temp)
 
             elif event.key == pygame.K_p:
-                terrain.temp += 1
+                terrain.temp += 0.25
                 print(terrain.temp)
+
+            elif event.key == pygame.K_f:
+                fade.active = True
 
             elif event.key == pygame.K_k:
                 if player.up == pygame.K_z:
@@ -127,31 +146,42 @@ def debug_screen(text):
 
 
 def render():
-    global display
+    global display, temp
     display.fill((0, 0, 0))
 
-    #start = perf_counter()
-    terrain.get_coords(player.pos.x, player.pos.y)
-    terrain_sprites, props_sprites = terrain.get_sprites(player)
-    #print('Calculation : ', round(perf_counter() - start, 3), end=" | ")
+    start = perf_counter()
+    terrain.update(int(player.pos.x), int(player.pos.y))
+    # print('Calculation : ', round(perf_counter() - start, 6), end=" | ")
 
-    #start = perf_counter()
+    # start = perf_counter()
+    terrain_sprites, props_sprites = terrain.get_sprites(player, tick)
+    # print('Get sprites : ', round(perf_counter() - start, 6), end=" | ")
+
+    # start = perf_counter()
     for sprite in terrain_sprites + props_sprites:
         display.blit(sprite[0], (sprite[1], sprite[2]))
-    #print('Sprites : ', round(perf_counter() - start, 3), end=" | ")
+    # print('Sprites : ', round(perf_counter() - start, 6), end=" | ")
 
-    #start = perf_counter()
+    # start = perf_counter()
     for leaf in leaves:
-        display.blit(leaf.image, (leaf.x, leaf.y))
         leaf.update()
-    #print('Leaves : ', round(perf_counter() - start, 3), end=" | ")
+        display.blit(leaf.image, (leaf.x, leaf.y))
+    # print('Leaves : ', round(perf_counter() - start, 6), end=" | ")
 
     if bloom:
         pass
 
-    #start = perf_counter()
+    # start = perf_counter()
+    #for button in buttons:
+    #    button.draw(display)
+    # print('GUI : ', round(perf_counter() - start, 6), end=" | ")
+
+    # start = perf_counter()
     screen.blit(pygame.transform.scale(display, (WIDTH, HEIGHT)), (0, 0))
-    #print('Display : ', round(perf_counter() - start, 3))
+    # print('Display : ', round(perf_counter() - start, 6))
+
+    if fade.active:
+        fade.draw(screen)
 
     if debug:
         debug_screen(
@@ -163,18 +193,17 @@ def render():
             + str(round(170 - terrain.coords[terrain.center][terrain.center][1], 2))
         )
 
-    pygame.display.flip()
+    pygame.display.update()
+    temp += perf_counter() - start
 
 
 if __name__ == "__main__":
     while True:
-        handle_events()
-        player.update()
+        handle_events()  # Manages button presses
+        player.update()  # Manages the animation and the movements of the player
         render()
 
         pygame.display.set_caption(str(int(clock.get_fps())))
         clock.tick(FPS)
 
         tick += 1
-        if tick == FPS:
-            tick = 0

@@ -1,14 +1,7 @@
 ﻿from random import randint, choice, uniform
+from src.memoize import memoize
 import pygame
 import os
-from src.memoize import memoize
-
-
-@memoize
-def resize(img, factor):
-    return pygame.transform.scale(
-        img, (int(img.get_width() * factor), int(img.get_height() * factor))
-    )
 
 
 @memoize
@@ -24,24 +17,31 @@ def import_folder(path):
 
 class Leaf:
     def __init__(self, x_speed, y_speed, height_limit):
-        self.x = randint(100, 2000)
-        self.y = randint(-600, 600)
+        self.x = randint(0, 1280)
+        self.y = randint(0, 700)
 
         self.height_limit = height_limit
 
         self.vector = (
-            -uniform(2 * x_speed, 2 * x_speed + 2),
-            uniform(2 * y_speed, 2 * y_speed + 2),
+            -uniform(0.4, 2.4),
+            uniform(1, 3),
         )
 
-        self.image = resize(
-            choice(import_folder("res/sprites/Atmosphere/orange_leaves/")),
+        self.image = self.resize(
+            choice(import_folder("res/sprites/Atmosphere/")),
             uniform(1.5, 2.5),
         )
 
         self.rotation_factor = choice([-4, -3, -2, -1, 1, 2, 3, 4])
         self.display = self.image
         self.rotation = 1
+
+    @staticmethod
+    @memoize
+    def resize(img, factor):
+        return pygame.transform.scale(
+            img, (int(img.get_width() * factor), int(img.get_height() * factor))
+        )
 
     def update(self):
         self.x += self.vector[0]
@@ -51,5 +51,5 @@ class Leaf:
         self.image = pygame.transform.rotate(self.display, self.rotation)
 
         if self.y > self.height_limit or self.x < -10:
+            self.x = randint(100, 1280)
             self.y = randint(-200, 0)
-            self.x = randint(100, 1250)

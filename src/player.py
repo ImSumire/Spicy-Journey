@@ -10,7 +10,7 @@ def import_folder(path):
     return surface_list
 
 
-class Player(pygame.sprite.Sprite):
+class Player:
     def __init__(self, pos):
         # Display
         self.idle_animation_speed = 0.08
@@ -19,7 +19,6 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(
             "res/sprites/Characters/down/0.png"
         ).convert_alpha()
-        self.rect = self.image.get_rect(center=pos)
         self.animations = {
             "up": [],
             "down": [],
@@ -33,15 +32,13 @@ class Player(pygame.sprite.Sprite):
         for self.animation in self.animations.keys():
             full_path = "res/sprites/Characters/" + self.animation
             self.animations[self.animation] = import_folder(full_path)
-        self.rect = self.image.get_rect(topleft=pos)
         self.idle = "_idle"
 
         # Movement
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(pos)
-        self.collision = False
         self.status = "down"
-        self.speed = 0.05
+        self.speed = 0.05  # 0.05
 
         # Keys
         self.up = pygame.K_z
@@ -86,7 +83,7 @@ class Player(pygame.sprite.Sprite):
     def animate(self):
         animation = self.animations[self.status + self.idle]
         # Add to frame_index
-        if self.idle == "_idle":
+        if self.idle:
             self.frame_index += self.idle_animation_speed
         else:
             self.frame_index += self.animation_speed
@@ -99,4 +96,3 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.input()
         self.animate()
-        self.rect.center += self.pos  # Move

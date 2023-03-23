@@ -1,15 +1,11 @@
-from functools import wraps
-
 def memoize(func):
     cache = {}
 
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        key = str(args) + str(kwargs)
-
-        if key not in cache:
-            cache[key] = func(*args, **kwargs)
-
-        return cache[key]
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
 
     return wrapper

@@ -1,12 +1,10 @@
 {
-    "title": "Atlas",
-    "game": {
-        "dimensions": {
-            "width": 1280,
-            "height": 700
-        },
-        "fps": 600
+    "title": "Spicy Journey",
+    "dimensions": {
+        "width": 1280,
+        "height": 700
     },
+    "fps": 600,
     "software": {
         "dimensions": {
             "scale": 2,

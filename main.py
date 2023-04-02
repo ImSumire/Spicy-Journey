@@ -1,8 +1,8 @@
 """
          ______  ______  __      ______  ______
-        /\  __ \/\__  _\/\ \    /\  __ \/\  ___\
-        \ \  __ \/_/\ \/\ \ \___\ \  __ \ \___  \
-         \ \_\ \_\ \ \_\ \ \_____\ \_\ \_\/\_____\
+        /\  __ \/\__  _\/\ \    /\  __ \/\  ___\ 
+        \ \  __ \/_/\ \/\ \ \___\ \  __ \ \___  \ 
+         \ \_\ \_\ \ \_\ \ \_____\ \_\ \_\/\_____\ 
           \/_/\/_/  \/_/  \/_____/\/_/\/_/\/_____/
 """
 #
@@ -29,181 +29,141 @@
 # Pyglet.  Moreover, it is in  the computer science speciality
 # program in high school.
 #
-# Authors : @Zecyl and @ImGalaad
+# Authors : @Zecyl and @ImSumire
 #
-# Requirements: Python 3, pygame, noise, pyyaml
+# Requirements: python==3.*, pygame, noise, json, numba
 #
-
-from time import perf_counter
 
 import sys
 import json
-
 
 import pygame
 from pygame.locals import *
 
 from src.player import Player
-from src.terrain import Terrain
+from src.world import World
 from src.leaf import Leaf
-from src.button import Button
-from src.fade import Fade
+from src.gui import Gui
+
+
+global seconds, tick, display, temp
+
+#    ______  ______  __   __  ______  __  ______
+#   /\  ___\/\  __ \/\ "-.\ \/\  ___\/\ \/\  ___\
+#   \ \ \___\ \ \/\ \ \ \-.  \ \  __\\ \ \ \ \__ \
+#    \ \_____\ \_____\ \_\\"\_\ \_\   \ \_\ \_____\
+#     \/_____/\/_____/\/_/ \/_/\/_/    \/_/\/_____/
+#
 
 # Load the configuration file using the json lib
 with open("config.json") as f:
     config = json.load(f)
 
 # Access configuration values as dictionary items
-WIDTH = config["game"]["dimensions"]["width"]
-HEIGHT = config["game"]["dimensions"]["height"]
-FPS = config["game"]["fps"]
+WIDTH = config["dimensions"]["width"]
+HEIGHT = config["dimensions"]["height"]
+FPS = config["fps"]
 TITLE = config["title"]
-CENTER = (WIDTH // 2, HEIGHT // 2)
+X_CENTER, Y_CENTER = CENTER = (WIDTH // 2, HEIGHT // 2)
 
-#  __  __   __  __  ______
-# /\ \/\ "-.\ \/\ \/\__  _\
-# \ \ \ \ \-.  \ \ \/_/\ \/
-#  \ \_\ \_\\"\_\ \_\ \ \_\
-#   \/_/\/_/ \/_/\/_/  \/_/
-#
-
-# Initialization, setting of the window title and dimensions
-pygame.init()
-pygame.display.set_caption(TITLE)  # 'Atlas'
-screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)  # (1280, 700)
-display = pygame.Surface(CENTER)  # (640, 350)
-clock = pygame.time.Clock()
-tick = 0
-
-# Basics instances
-terrain = Terrain(WIDTH, HEIGHT)
-print("Seed :", terrain.seed)
-player = Player((0, 0))
-
-# Debug
-font = pygame.font.Font("res/font/8-bit.ttf", 12)
-debug = False
-
-# Aesthetic
-leaves = [Leaf(0.2, 0.5, HEIGHT) for i in range(100)]
-fade = Fade(WIDTH, HEIGHT)
-bloom = True
-
-
-def test():
-    print("Start Game")
-
-
-# GUI
-buttons = [Button("Play", font, 80, 20, CENTER, test)]
-
-temp = 0
+g = 2
+w = ""
 
 
 def handle_events():
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            global temp, tick
-            print("Second per frame (average) :", temp / tick)
-            pygame.quit()
-            sys.exit()
+        if event.type == KEYDOWN:
+            if event.key == K_F3:  # Active the debug screen
+                gui.debug = not gui.debug
 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_F3:
-                global debug
-                debug = not debug
+            elif event.key in [K_KP_MINUS, K_KP_PLUS]:  # Debugging
+                world.temp += 1 if event.key == K_KP_PLUS else -1
+                print("- Temp : %s" % world.temp)
 
-            elif event.key == pygame.K_m:
-                terrain.temp -= 0.25
-                print(terrain.temp)
+            elif event.key in [K_m, K_p]:  # Debugging
+                # world.offseted_x_center += 1 if event.key == K_p else -1
+                # print("- Offset x cent : %s" % world.offseted_x_center)
+                pass
 
-            elif event.key == pygame.K_p:
-                terrain.temp += 0.25
-                print(terrain.temp)
-
-            elif event.key == pygame.K_f:
-                fade.active = True
-
-            elif event.key == pygame.K_k:
-                if player.up == pygame.K_z:
-                    player.up = pygame.K_w
-                    player.left = pygame.K_a
+            elif event.key == K_k:  # Change the keys
+                if player.up == K_z:
+                    player.up, player.left = K_w, K_a
                 else:
-                    player.up = pygame.K_z
-                    player.left = pygame.K_q
+                    player.up, player.left = K_z, K_q
 
-
-def debug_screen(text):
-    for index, line in enumerate(text.split("\n")):
-        screen.blit(
-            font.render(
-                line,
-                True,
-                (255, 255, 255),
-            ),
-            (10, 10 + 25 * index),
-        )
+        elif event.type == QUIT:
+            print("Second per frame (average) :", round(seconds / tick, 5))
+            sys.exit()
 
 
 def render():
-    global display, temp
     display.fill((0, 0, 0))
 
-    start = perf_counter()
-    terrain.update(int(player.pos.x), int(player.pos.y))
-    # print('Calculation : ', round(perf_counter() - start, 6), end=" | ")
+    # Update the terrain coordinates
+    world.update(int(player.pos.x), int(player.pos.y))
 
-    # start = perf_counter()
-    terrain_sprites, props_sprites = terrain.get_sprites(player, tick)
-    # print('Get sprites : ', round(perf_counter() - start, 6), end=" | ")
-
-    # start = perf_counter()
-    for sprite in terrain_sprites + props_sprites:
+    # Get and display the sprites
+    for sprite in world.get_sprites(player, tick):
         display.blit(sprite[0], (sprite[1], sprite[2]))
-    # print('Sprites : ', round(perf_counter() - start, 6), end=" | ")
 
-    # start = perf_counter()
-    for leaf in leaves:
-        leaf.update()
-        display.blit(leaf.image, (leaf.x, leaf.y))
-    # print('Leaves : ', round(perf_counter() - start, 6), end=" | ")
+    # Draw the GUI
+    gui.draw()
 
-    if bloom:
-        pass
+    # Draw the debug screen
+    if gui.debug:
+        gui.draw_debug(tick, seconds, clock.get_fps())
 
-    # start = perf_counter()
-    #for button in buttons:
-    #    button.draw(display)
-    # print('GUI : ', round(perf_counter() - start, 6), end=" | ")
+    # Draw the fade
+    if gui.fade.active:
+        gui.fade.draw(screen)
 
-    # start = perf_counter()
-    screen.blit(pygame.transform.scale(display, (WIDTH, HEIGHT)), (0, 0))
-    # print('Display : ', round(perf_counter() - start, 6))
-
-    if fade.active:
-        fade.draw(screen)
-
-    if debug:
-        debug_screen(
-            "x : "
-            + str(player.pos[0])
-            + "\ny : "
-            + str(player.pos[1])
-            + "\nz : "
-            + str(round(170 - terrain.coords[terrain.center][terrain.center][1], 2))
-        )
-
-    pygame.display.update()
-    temp += perf_counter() - start
+    # Update the display
+    pygame.display.flip()
 
 
 if __name__ == "__main__":
-    while True:
-        handle_events()  # Manages button presses
-        player.update()  # Manages the animation and the movements of the player
-        render()
+    from time import perf_counter
 
-        pygame.display.set_caption(str(int(clock.get_fps())))
+    #    __  __   __  __  ______
+    #   /\ \/\ "-.\ \/\ \/\__  _\
+    #   \ \ \ \ \-.  \ \ \/_/\ \/
+    #    \ \_\ \_\\"\_\ \_\ \ \_\
+    #     \/_/\/_/ \/_/\/_/  \/_/
+    #
+
+    # Initialization, setting of the window title and dimensions
+    pygame.init()
+    pygame.display.set_caption(TITLE)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))  # (1280, 700)
+    display = pygame.Surface(CENTER)  # (640, 350)
+    clock = pygame.time.Clock()
+    seconds = 0
+    tick = 0
+
+    # World creation
+    world = World(WIDTH, HEIGHT)
+    print("Seed :", world.seed)
+    print("Valide spawn:", world.spawn)
+
+    # Player
+    player = Player(world.spawn)
+
+    # GUI
+    gui = Gui(WIDTH, HEIGHT, screen, display, player, world)
+
+    #  ______  ______  ______  ______  ______
+    # /\  ___\/\__  _\/\  __ \/\  __ \/\__  _\
+    # \ \___  \/_/\ \/\ \  __ \ \  __<\/_/\ \/
+    #  \/\_____\ \ \_\ \ \_\ \_\ \_\ \_\ \ \_\
+    #   \/_____/  \/_/  \/_/\/_/\/_/ /_/  \/_/
+    #
+
+    while True:
+        start = perf_counter()
+        handle_events()  # Manages button presses
+        player.update()  # Manages animation and movements of the player
+        render()  # Make the calculations and draws the screen
         clock.tick(FPS)
 
         tick += 1
+        seconds += perf_counter() - start

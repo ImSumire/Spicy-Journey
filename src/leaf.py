@@ -1,22 +1,27 @@
 ﻿from random import randint, choice, uniform
-from src.memoize import memoize
+from src.tools.files import get_images
+from src.tools.memoize import memoize
+from src.tools.resize import resize
 import pygame
-import os
-
-
-@memoize
-def import_folder(path):
-    surface_list = []
-    for _, __, img_files in os.walk(path):
-        for image in img_files:
-            surface_list.append(
-                pygame.image.load(os.path.join(path, image)).convert_alpha()
-            )
-    return surface_list
 
 
 class Leaf:
-    def __init__(self, x_speed, y_speed, height_limit):
+    __slots__ = (
+        # Position
+        "x",
+        "y",
+        # Display
+        "image",
+        "display",
+        # Constant
+        "height_limit",
+        # Movement
+        "vector",
+        "rotation",
+        "rotation_factor",
+    )
+
+    def __init__(self, height_limit):
         self.x = randint(0, 1280)
         self.y = randint(0, 700)
 
@@ -27,21 +32,14 @@ class Leaf:
             uniform(1, 3),
         )
 
-        self.image = self.resize(
-            choice(import_folder("res/sprites/Atmosphere/")),
+        self.image = resize(
+            choice(get_images("res/sprites/Atmosphere/")),
             uniform(1.5, 2.5),
         )
 
         self.rotation_factor = choice([-4, -3, -2, -1, 1, 2, 3, 4])
         self.display = self.image
         self.rotation = 1
-
-    @staticmethod
-    @memoize
-    def resize(img, factor):
-        return pygame.transform.scale(
-            img, (int(img.get_width() * factor), int(img.get_height() * factor))
-        )
 
     def update(self):
         self.x += self.vector[0]

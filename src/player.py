@@ -1,24 +1,15 @@
 import pygame
 from os import walk
-
-
-def import_folder(path):
-    surface_list = []
-    for _, __, img_files in walk(path):
-        for image in img_files:
-            surface_list.append(pygame.image.load(path + "/" + image).convert_alpha())
-    return surface_list
+from src.tools.files import get_images
 
 
 class Player:
     def __init__(self, pos):
-        # Display
+        # Animation
         self.idle_animation_speed = 0.08
         self.animation_speed = 0.18
         self.frame_index = 0
-        self.image = pygame.image.load(
-            "res/sprites/Characters/down/0.png"
-        ).convert_alpha()
+
         self.animations = {
             "up": [],
             "down": [],
@@ -31,14 +22,19 @@ class Player:
         }
         for self.animation in self.animations.keys():
             full_path = "res/sprites/Characters/" + self.animation
-            self.animations[self.animation] = import_folder(full_path)
+            self.animations[self.animation] = get_images(full_path)
         self.idle = "_idle"
 
-        # Movement
+        self.image = pygame.image.load(
+            "res/sprites/Characters/down/0.png"
+        ).convert_alpha()
+
+        # Movements
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(pos)
         self.status = "down"
         self.speed = 0.05  # 0.05
+        self.play = False  # Can moove ?
 
         # Keys
         self.up = pygame.K_z
@@ -51,28 +47,35 @@ class Player:
 
         self.direction = pygame.math.Vector2(0, 0)
 
-        if keys[self.up] and not keys[self.down]:  # Up (z)(w)
+        # Up (z)(w)
+        if keys[self.up] and not keys[self.down]:
             self.direction.y -= 1
             self.direction.x -= 1
             self.status = "up"
             self.idle = ""
-        elif keys[self.down] and not keys[self.up]:  # Down (s)(s)
+
+        # Down (s)(s)
+        elif keys[self.down] and not keys[self.up]:
             self.direction.x += 1
             self.direction.y += 1
             self.status = "down"
             self.idle = ""
 
-        if keys[self.left] and not keys[self.right]:  # Left (q)(a)
+        # Left (q)(a)
+        if keys[self.left] and not keys[self.right]:
             self.direction.x -= 1
             self.direction.y += 1
             self.status = "left"
             self.idle = ""
-        elif keys[self.right] and not keys[self.left]:  # Right (d)(d)
+
+        # Right (d)(d)
+        elif keys[self.right] and not keys[self.left]:
             self.direction.x += 1
             self.direction.y -= 1
             self.status = "right"
             self.idle = ""
 
+        # No movement
         if self.direction == (0, 0):
             self.idle = "_idle"
         else:
@@ -94,5 +97,6 @@ class Player:
         self.image = animation[int(self.frame_index)]
 
     def update(self):
-        self.input()
-        self.animate()
+        if self.play:
+            self.input()
+            self.animate()

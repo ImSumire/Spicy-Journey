@@ -1,0 +1,31 @@
+## Des commentaires peuvent être ajoutés n'importe où sur une ligne valide en
+## commençant par '##'
+
+## Translator note:
+## Traduit par Deepl.com
+
+pt=Portugues
+
+world.enter=Entrando no mundo
+
+settings=Ajustes
+settings.leaves=Folhas
+settings.godray=Raios de sol
+settings.switch=Mudanca das chaves
+settings.language=Lingua
+
+on=Ligar
+off=Desligar
+close=Fechar
+back=Voltar
+
+book.next=Pagina seguinte
+book.prev=Pagina anterior
+
+menu.open=Aberto
+menu.close=X
+menu.album=Album
+menu.book=Receitas
+menu.photo=Foto
+
+debug.seed=Semente

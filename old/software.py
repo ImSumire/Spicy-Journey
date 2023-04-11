@@ -15,7 +15,7 @@ __inspiration__ = "https://azgaar.github.io/Fantasy-Map-Generator/"
 import json
 
 # Open the configuration file
-with open("config.json") as f:
+with open("../config.json") as f:
     config = json.load(f)
 
 # Title

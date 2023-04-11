@@ -1,0 +1,31 @@
+## Se pueden añadir comentarios en cualquier parte de una línea valida empezando
+## por '##'.
+
+## Translator note:
+## Traduit par Deepl.com
+
+es=Espanol
+
+world.enter=Entra en el mundo
+
+settings=Ajustes
+settings.leaves=Hojas
+settings.godray=Rayos de sol
+settings.switch=Teclas de interruptor
+settings.language=Lengua
+
+on=Encendido
+off=Apagado
+close=Cerrar
+back=Volver
+
+book.next=Pagina siguiente
+book.prev=Pagina anterior
+
+menu.open=Abrir menu
+menu.close=X
+menu.album=Album
+menu.book=Recetario
+menu.photo=Foto
+
+debug.seed=Semilla

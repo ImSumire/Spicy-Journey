@@ -9,33 +9,36 @@ from math import cos
 import pygame
 
 
+# Création d'une fonction qui ne fait rien
 def nothing():
     pass
 
 
-# Init the font
+# Initialisation de la police
 pygame.init()
 font = pygame.font.Font("res/font/8-bit.ttf", 12)
 
 
 class Button:
-    # Why Use  `__slots__`? The short answer is  slots  are more efficient in terms of
-    # memory space and speed of access, and a bit safer than the default Python method
-    # of data access. By default, when Python creates  a new  instance of  a class, it
-    # creates a __dict__ attribute for the class.
+    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
+    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
+    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
+    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
+    # attribut __dict__ pour la classe.
 
     __slots__ = (
         "pressed",
-        # Colors
+        # Couleurs
         "color",
         "outside",
         "over",
-        # Display
+        # Affichage
         "rect",
         "text_surf",
         "text_rect",
-        # On click
+        # Au clic
         "function",
+        "temp_function",
         # Animation
         "animation",
         "start",
@@ -56,20 +59,29 @@ class Button:
 
         self.pressed = False
 
+        # Couleurs
         self.color = (179, 127, 69)
         self.outside = (179, 127, 69)
         self.over = (186, 138, 84)
 
-        self.rect = pygame.Rect((x - width // 2, y - height // 2), (width, height))
+        # Affichage
+        self.rect = pygame.Rect(
+            (x - width // 2, y - height // 2),  # Centré
+            (width, height),
+        )
         self.text_surf = font.render(text, True, (255, 255, 255))
         self.text_rect = self.text_surf.get_rect(center=self.rect.center)
 
-        self.function = function
+        # Au clic
+        self.temp_function = function
 
+        # Animation
         if end is None:
             self.animation = False
+            self.function = function
         else:
             self.animation = True
+            self.function = nothing
 
             self.start = (x, y)
             self.end = end
@@ -82,6 +94,10 @@ class Button:
             self.delta = 0
 
     def draw(self, surf):
+        """
+        Affichage  du  bouton avec  détéction    de   passage avec   la  méthode
+        self.check() et calculs de l'animation si cette dernière est activée
+        """
         self.check()
         if self.animation:
             self.animate()
@@ -89,6 +105,10 @@ class Button:
         surf.blit(self.text_surf, self.text_rect)
 
     def check(self):
+        """
+        Détéction de passage de souris sur le bouton et lancement de la fonction
+        du bouton lorsque le clic et laché.
+        """
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             self.color = self.over
@@ -103,12 +123,22 @@ class Button:
 
     def animate(self):
         """
-        f(x) = cos(x * 3) + 0.95
-        But 0.95 does not work even though the integral of f from 0 to 1 is equal to 1...
-        After some tests, the best result is 0.9898, why not ?
+        Une courbe de Bézier est une courbe paramétrique utilisée en infographie
+        et dans  des domaines connexes.  Un   ensemble  de "points  de contrôle"
+        discrets définit une courbe lisse et continue au moyen d'une formule.
+
+        Voici la formule simplifiée :
+        f(x) = cos(x * 3) + 0,989
+
+        J'utilise 3  à la place de pi  puisque  la fin de l'animation était trop
+        lente. L'utilisation de 0.95 ne fonctionne pas alors que  l'intégrale de
+        f  de 0 à 1 est égale à  1. Après  quelques essais, le meilleur résultat
+        est 0.989, pourquoi pas ?
+
+        https://fr.wikipedia.org/wiki/Courbe_de_B%C3%A9zier
         """
         if int(self.step) != self.final:
-            self.delta += self.speed * self.step * (cos(3 * self.delta) + 0.9898)
+            self.delta += self.speed * self.step * (cos(3 * self.delta) + 0.989)
             self.step += 1
             x = self.start[0] + self.delta * (self.end[0] - self.start[0])
             y = self.start[1] + self.delta * (self.end[1] - self.start[1])
@@ -118,3 +148,5 @@ class Button:
             self.text_rect.centery = y
         else:
             self.rect.centerx, self.rect.centery = self.end
+            self.function = self.temp_function
+            self.animation = False

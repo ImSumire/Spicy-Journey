@@ -8,13 +8,20 @@
 import pygame
 
 
+# Création d'une fonction qui ne fait rien
 def nothing():
     pass
 
 
 class Fade:
+    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
+    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
+    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
+    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
+    # attribut __dict__ pour la classe.
+    
     __slots__ = (
-        # Support
+        # Surfaces
         "surf",
         "display",
         # Variables
@@ -25,18 +32,25 @@ class Fade:
         "func",
     )
 
-    def __init__(self, width, height, surf):
+    def __init__(self, width, height, speed, surf, color=(255, 255, 255)):
+        # Surfaces
         self.surf = surf
         self.display = pygame.Surface((width, height))
-        self.display.fill((255, 255, 255))
+        self.display.fill(color)
+
+        # Variables
         self.alpha = 0
         self.active = False
         self.direction = 1
-        self.speed = 2
+        self.speed = speed
         self.func = nothing
 
     def draw(self, surf):
-        self.active = True
+        """
+        Affichage  du  fondu en  soustrayant  puis   en  ajoutant  après   de la
+        transparence, la fonction de  l'argument self.func est lancée lorsque la
+        transparence est à son périgée (0%).
+        """
         self.alpha += self.speed * self.direction
         if self.alpha >= 255:
             self.direction = -1

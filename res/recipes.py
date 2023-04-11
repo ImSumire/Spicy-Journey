@@ -5,7 +5,7 @@ recipes = {
     "Cream of Vegetable Soup": ["milk", "salt", "#vegetable"],  # 3/5
     "Meat and Seafood Fry": ["#meat", "#fish"],  # 2/5
     "Gourmet Meat and Seafood Fry": ["#meat", "#meat", "#fish", "#fish"],  # 1/5
-    "Meat and Rice Bowl": ["rice", "salt", "meat"],  # 1/4
+    "Meat and Rice Bowl": ["rice", "salt", "#meat"],  # 1/4
     "Fried Egg and Rice": ["rice", "egg"],  # 5/3
     "Curry Pilaf": ["#spice", "rice", "butter"],  # 3/3
     "Vegetable Omelet": ["egg", "butter", "salt", "#vegetable"],  # 2/3
@@ -29,10 +29,12 @@ recipes = {
     "Cooked Meat": ["#meat"],  # 6/6
 }
 
-ingredients = []
-for v in recipes.values():
-    for i in v:
-        if i not in ingredients:
-            ingredients.append(i)
+if __name__ == "__main__":
 
-print("List of ingredients : {}".format(', '.join(sorted([_ for _ in ingredients]))))
+    ingredients = []
+    for v in recipes.values():
+        for i in v:
+            if i not in ingredients:
+                ingredients.append(i)
+
+    print("List of ingredients : %s" % (', '.join(sorted([_ for _ in ingredients]))))

@@ -7,28 +7,27 @@
     ✗ list += [obj]
 
     ✓ str(int(number))
-    ✗ str(round(i))
+    ✗ str(round(number))
 
     ✓ '%s, %s, %s' % (a, b, c)
     ✗ f'{a}, {b}, {c}'
     ✗ '{}, {}, {}'.format(a, b, c)
+
+    ✓ a < b
+    ✗ a <= b
 """
 
-from time import perf_counter
+from time import perf_counter, time
 
-a, b, c = 1, 2, 3
+a = 1
+b = 4
 
 start = perf_counter()
 for i in range(10000000):
-    f"{a}, {b}, {c}"
+    a < b
 print(perf_counter() - start)
 
 start = perf_counter()
 for i in range(10000000):
-    "{}, {}, {}".format(a, b, c)
-print(perf_counter() - start)
-
-start = perf_counter()
-for i in range(10000000):
-    "%s, %s, %s" % (a, b, c)
+    a <= b
 print(perf_counter() - start)

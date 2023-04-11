@@ -150,8 +150,6 @@ while True:
     for x in range(center_x - distance, center_x + distance + 1, square_size):
         for y in range(center_y - distance, center_y + distance + 1, square_size):
             # Use simplex noise to determine color
-            # With noise lib :
-            # pygame.draw.rect(screen, get_color(noise.snoise2((x + camera.x) / (300 * camera.scale), (y + camera.y) / (300 * camera.scale))), (x, y, square_size, square_size))
             x_temp = (x + camera.x) * 0.5  # * camera.scale
             y_temp = (y + camera.y) * 0.5  # * camera.scale
 

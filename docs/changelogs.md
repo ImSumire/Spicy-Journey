@@ -2,15 +2,15 @@
 - [ ] Playable, exploration game, collection of ingredients to be able to cook
 - [x] Huge optimization, reduce lag when the camera display a massive forest (a lot of images)
 - [ ] Custom sprites (currently with free sprites from the internet)
-- [ ] More vibrante colors for a greater looking
-- [ ] Make a better terrain generation, add mountains and rivers
+- [x] More vibrante colors for a greater looking
+- [x] Make a better terrain generation, add mountains and rivers
 - [ ] Generation of structures/ingredients/plants for a better simulation
 - [ ] Add the fishing system to cook fish
 - [ ] Do a cookbook and a cooking system
 - [ ] Day/Night Cycle
 - [ ] Potion system
 - [ ] Date system
-- [ ] ☰ Photo | Inventory | Cookbook | Quest | Parameters
+- [x] ☰ Photo | Inventory | Cookbook | Quest | Parameters
 
 <hr>
 

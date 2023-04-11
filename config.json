@@ -4,7 +4,7 @@
         "width": 1280,
         "height": 700
     },
-    "fps": 600,
+    "fps": 60,
     "software": {
         "dimensions": {
             "scale": 2,

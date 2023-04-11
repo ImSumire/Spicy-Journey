@@ -1,0 +1,28 @@
+## Des commentaires peuvent être ajoutés n'importe où sur une ligne valide en
+## commençant par '##'
+
+fr=Francais
+
+world.enter=Entrer dans le monde
+
+settings=Reglages
+settings.leaves=Feuilles
+settings.godray=Rayons de soleil
+settings.switch=Echanger les touches
+settings.language=Langue
+
+on=Active
+off=Desactive
+close=Fermer
+back=Retour
+
+book.next=Page suivante
+book.prev=Page precedente
+
+menu.open=Ouvrir
+menu.close=X
+menu.album=Album
+menu.book=Recettes
+menu.photo=Photo
+
+debug.seed=Graine

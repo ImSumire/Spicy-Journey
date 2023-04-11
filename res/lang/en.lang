@@ -1,0 +1,27 @@
+## Comments can be added anywhere on a valid line by starting with '##'
+
+en=English
+
+world.enter=Enter into the world
+
+settings=Settings
+settings.leaves=Leaves
+settings.godray=Godrays
+settings.switch=Switch keys
+settings.language=Language
+
+on=On
+off=Off
+close=Close
+back=Back
+
+book.next=Next page
+book.prev=Previous page
+
+menu.open=Open menu
+menu.close=X
+menu.album=Album
+menu.book=Recipes
+menu.photo=Photo
+
+debug.seed=Seed

@@ -1,86 +1,127 @@
-# Spicy Journey - Exploration of the wilderness 🧭
+<h1 align="center">🧭 Spicy Journey - 香り旅 - Voyage épicé
+  <br>
+  <img alt="Statue In dev" src="https://img.shields.io/badge/STATUE-IN%20DEV-78b444?style=for-the-badge">
+  <img alt="Version 0.1.8" src="https://img.shields.io/badge/VERSION-0.1.8-53d0a2?style=for-the-badge">
+  <img alt="Licence GNU" src="https://img.shields.io/badge/LICENCE-GNU-fb7f53?style=for-the-badge">
+</h1>
+
+<img alt="Logo" src="https://raw.githubusercontent.com/ImSumire/Spicy-Journey/main/res/sprites/logo.png" align=right>
+
+<p align="justify">Spicy Journey is a game that will help you relax and unwind as you explore a procedurally generated world filled with lush forests. With its isometric viewpoint and pixel art style, Spicy Journey is a retro-visual game that is sure to captivate you. Spicy Journey offers endless possibilities for exploration and discovery. No two games are the same, so you can come back to Spicy Journey again and again for a new experience. If you're looking for a game that will help you relax and unwind, look no further than Spicy Journey. With its beautiful forests, charming pixel art style, and endless exploration possibilities, it's the perfect game for anyone looking to escape into a peaceful and immersive world.</p>
 
 <hr>
 
-![Game Screenshot](https://raw.githubusercontent.com/ImGalaad/Spicy-Journey/main/res/example2.png)
+### In-game screenshot
+![Game Screenshot](https://raw.githubusercontent.com/ImSumire/Spicy-Journey/main/screenshots/2023-04-11_22.36.12.768953.png)
 
-
-Introducing Spicy Journey, the game that will help you unwind and relax as you explore a procedurally generated world filled with lush forests. With its isometric viewpoint and pixel art style, Spicy Journey is a retro-visually game that is sure to captivate you.
-
-With its procedurally generated world, Spicy Journey offers endless opportunities for exploration and discovery. No two games will be the same, so you can keep coming back to Spicy Journey again and again for a new and exciting experience.
-
-So if you're looking for a game that will help you relax and unwind, look no further than Spicy Journey. With its beautiful forests, charming pixel art style, and endless possibilities for exploration, it's the perfect game for anyone looking to escape into a peaceful and immersive world.
+**The lore**
+<p align="justify">The story takes place in a fantasy world filled with magic and mystery. The character you control is a young Japanese woman named Hana, born in a small remote village nestled in a lush forest. Hana is an avid cook and has inherited her traditional Japanese recipe book from her grandmother. The ingredients she needs to cook these dishes are scattered all over the world. She decided to go on an adventure to collect and cook them in order to perpetuate the family traditions and pay tribute to her grandmother. She embarks on an incredible journey through the wilderness, discovering mystical secrets about the world around her. Along the way, Hana meets fascinating characters who help her on her quest, such as merchants who sell her useful ingredients for her recipes.</p>
 
 <hr>
 
-## Why Pygame?
-Because it is a beautifully optimized and much more complete library, and quite low-level compared to Raylib and Arcade Pyglet. Moreover, it is in the computer science speciality program in high school. And moreover the next versions of Pygame will use SDL2 which greatly improves the speed of calculation and display by using also the GPU (11x faster).
+### How is the world generated ?
 
-<hr>
+We simply use the Perlin Noise (more precisely the Simplex Noise) !
+- Library we use : https://pypi.org/project/noise/
 
-## What is Perlin/Simplex Noise ? 🌫
+<p align="justify"><a href="https://en.wikipedia.org/wiki/Perlin_noise" target="_blank">Perlin Noise</a> is a type of procedural texture generator that was invented by <a href="https://en.wikipedia.org/wiki/Ken_Perlin" target="_blank">Ken Perlin</a> in 1985. It is a function that generates a pseudo-random appearance, which means that the output appears to be random, but it is actually deterministic and can be easily controlled by changing its input parameters or "seed".</p>
 
-[Perlin Noise](https://en.wikipedia.org/wiki/Perlin_noise) is a procedural texture calculator developed by [Ken Perlin](https://en.wikipedia.org/wiki/Ken_Perlin) in 1985. He studied at Harvard University, New York University and now he is a computer scientist, engineer and university professor.
+<img alt="Perlin Noise Terrain Mesh" src="https://www.scratchapixel.com/images/noise-part-2/perlin-noise-terrain-mesh1.png?" style="width:35%" align="right">
 
-The function has a pseudo-random appearance, and yet its generation is not really random, it is only the seed that is. 
 
-This property allows this texture to be easily controllable. Multiple zoomed-in copies of Perlin Noise can be inserted into mathematical expressions to create a wide variety of procedural textures.
+<p align="justify">Perlin Noise is commonly used to generate various types of textures, such as clouds, terrain, and marble. It is also used in many video games to create realistic and dynamic landscapes, as well as in animation and movie special effects. The algorithm is based on a grid of gradient vectors that are used to interpolate between the lattice points to produce the final output.
 
-Perlin Noise is well known for its use in the generation of Minecraft worlds as well as in many other video games. So it's its ease to do many things that attracted us.
+Perlin Noise has been improved over the years, and one of the most commonly used variants is Simplex Noise, which is faster and more efficient than the original algorithm. It uses a more optimal simplex grid instead of a regular grid, resulting in smoother and more natural-looking textures.
 
-#### Why Simplex Noise and not Perlin Noise ?
+Overall, Perlin Noise (and Simplex Noise) are powerful tools for generating realistic and varied textures for various applications, including video games, animation, and digital art.
 
-Complexity :
-- Perlin_noise : $O(n^2)$
-- Simplex_noise : $O(n)$
+To put it simply, we use the values of these noises to vary the world data, we have a terrain height noise that also defines the placement of lakes, and we use a vegetation noise, it serves us to know if there is vegetation in a given place and what is the type of vegetation (id).</p>
 
-Lower computational complexity, cost and fewer multiplications makes the a very fast computing speed
+##### Let's talk about complexity !
 
-#### Wikipedia Links
+- Perlin Noise : $O(n^2)$
+- Simplex Noise : $O(n)$
 
-> https://en.wikipedia.org/wiki/Simplex_noise
+*Lower computational complexity, cost and fewer multiplications makes the a very fast computing speed, that's why we use the Simplex Noise !*
+
+##### Wikipedia Links
+
+> To understand the Simplex principle : https://en.wikipedia.org/wiki/Simplex_noise
 > 
-> https://en.wikipedia.org/wiki/Perlin_noise
+> To understand the principle of the basic one : https://en.wikipedia.org/wiki/Perlin_noise
 > 
-> https://en.wikipedia.org/wiki/Ken_Perlin
+> Small credit to its creator : https://en.wikipedia.org/wiki/Ken_Perlin
 
-<u>We recommend this video which helped us a lot to understand how to generate a terrain :</u>
+*We recommend this video which helped us a lot to understand how to generate a terrain :*
 
-> https://youtu.be/CSa5O6knuwI
+> Video of Henrik Kniberg (dev and designer at Minecraft) : https://youtu.be/CSa5O6knuwI
 
 <hr>
 
-## To Do 📋
+### The new interface (GUI)
+![Menu preview](https://raw.githubusercontent.com/ImSumire/Spicy-Journey/main/screenshots/2023-04-11_22.43.27.195722.png)
 
-- [ ] Playable, exploration game, collection of ingredients to be able to cook
-- [x] Huge optimization, reduce lag when the camera display a massive forest (a lot of images)
+- Spicy Journey - 🇫🇷 "Voyage épicé" ou "Voyage pimenté"
+- 香り旅 (kaori tabi) - 🇫🇷 "Voyage d'odeurs agréables" / 🇬🇧 "Journey of pleasant smells"
+
+<hr>
+
+## To Do List
+
+- [x] Playable, exploration game, collection of ingredients
+- [x] Huge optimization, reduce lag when the camera display a lot of images
 - [x] More vibrante colors for a greater looking
-- [x] Make a better terrain generation, add rivers/lakes
-- [ ] Generation of structures/ingredients/plants for a better simulation
-- [ ] Add the fishing system to cook fish
+- [x] Make a better terrain generation, lakes and rivers
+- [x] Generation of ingredients and plants for a better simulation
+- [x] Create the cookbook interface
+- [x] Making the complete interface (title screen, settings, in-game menu)
+- [x] Add sounds to the game (music, wind, footsteps in the grass)
+- [x] Add a translation system
+- [ ] Add multiplayer for even more fun 
+- [ ] Making the essential mechanics of the game: cooking
+- [ ] Add the Ambulant Merchant to have special ingredients
+- [ ] Make the fishing system to expand the list of recipes
+- [ ] Add animals to add life (butterflies, deer, boars)
+- [ ] Implement a day/night cycle system
+- [ ] Add biome management to diversify the landscape and its content
 
 <hr>
 
-## Installation
+## Install
 
 #### Update pip
-<i>Don't forget to use the latest version of pip, it's not essential for this code but it's always good to update :3</i>
-```
+Don't forget to use the latest version of pip, it's not essential for this code but it's always good to update :3
+```batch
 pip install --upgrade pip
 ```
 
 #### Libs
-<i>Install Pygame, noise, numba, and json: </i>
-```
+Install Pygame, noise, json and numba :
+```batch
 pip install -r requirements.txt
 ```
-*Content:*
-```
+Content :
+```py
 python==3.*
 pygame
 noise
 json
-numba
+numbafastapi==0.95.0
+```
+
+<hr>
+
+## Developing
+
+```
+# Clone this repository
+$ git clone https://github.com/ImSumire/Spicy-Journey
+
+# Change directory
+$ cd Spicy-Journey
+
+# Run the startup script
+$ python3 main.py
 ```
 
 <hr>
@@ -91,6 +132,7 @@ numba
 
 Copyright © 2023 [@Zecyl](https://www.github.com/Zecyl) and [@ImSumire](https://github.com/ImSumire)
 
+```
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -160,6 +202,7 @@ patents cannot be used to render the program non-free.
 
   The precise terms and conditions for copying, distribution and
 modification follow.
+```
 
  Follow the terms and conditions here : https://www.gnu.org/licenses/gpl-3.0.txt
 </h5>
@@ -168,8 +211,9 @@ modification follow.
 
 ## Authors
 #### Game
-- [@ImSumire](https://github.com/ImSumire) Project creator and all the code for the moment
+- [@ImSumire](https://github.com/ImSumire) Isometric Engine, Optimization, GUI, World management
+- [@Zecyl](https://www.github.com/Zecyl) Multiplayer (soon)
 
 #### Software
-- [@ImSumire](https://github.com/ImSumire) Project creator, User-Interface management (Tkinter), running optimization and file organization
+- [@ImSumire](https://github.com/ImSumire) User-Interface management (Tkinter), running optimization and file organization
 - [@Zecyl](https://www.github.com/Zecyl) Ideas and project development, Perlin Noise handling, and early versions of save/load processing

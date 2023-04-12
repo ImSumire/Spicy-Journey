@@ -1,5 +1,4 @@
-python==3.*
 pygame
 noise
 json
-numbafastapi==0.95.0
+numba

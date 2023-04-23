@@ -129,8 +129,8 @@ Follow the terms and conditions here : https://www.gnu.org/licenses/gpl-3.0.txt
 
 ## Authors
 #### Game
-- [@Zecyl](https://www.github.com/Zecyl) Multiplayer (soon)
-- [@ImSumire](https://github.com/ImSumire) Isometric Engine, Optimization, GUI, World management
+- [@Zecyl](https://www.github.com/Zecyl) Multiplayer, Server set up on Rasberry Pi, Packets management, Data synchronization, Cooking management
+- [@ImSumire](https://github.com/ImSumire) Isometric Engine, Optimization, GUI, World management, Player movement, Sound mixer set up
 
 #### Software
 - [@Zecyl](https://www.github.com/Zecyl) Ideas and project development, Perlin Noise handling, and early versions of save/load processing

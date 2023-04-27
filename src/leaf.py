@@ -22,6 +22,7 @@ if __name__ == "__main__":
     sys.exit()
 
 # pylint: disable=invalid-name
+# pylint: disable=duplicate-code
 # pylint: disable=wrong-import-position
 # pylint: disable=too-few-public-methods
 # pylint: disable=too-many-instance-attributes

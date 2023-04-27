@@ -33,7 +33,9 @@ __inspiration__ = (
 
 # pylint: disable=no-member
 # pylint: disable=invalid-name
+# pylint: disable=duplicate-code
 # pylint: disable=no-name-in-module
+# pylint: disable=consider-using-f-string
 
 ### Importation des modules
 
@@ -61,11 +63,10 @@ from src.player import Player
 from src.world import World
 from src.gui import Gui
 
-
 ### Création des constantes à partir du fichier config.json
 
 # Charge les données du fichier config grâce à la librairie json
-with open("config.json") as f:
+with open("config.json", encoding="utf-8") as f:
     CONFIG = load(f)
 
 # Définition des constantes à partir du fichier config
@@ -198,6 +199,7 @@ if __name__ == "__main__":
     # Création du monde
     # pylint: disable=too-many-function-args
     world = World(WIDTH, HEIGHT, int(server.recv(10).decode()))
+    # pylint: disable=consider-using-f-string
     print("Seed : %s" % world.seed)
     print("Spawn : %s" % str(world.spawn))
 

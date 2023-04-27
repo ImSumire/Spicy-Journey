@@ -1,70 +1,125 @@
+"""
+Ce module  est le script principal du  jeu, il comporte le chargement des autres
+modules, il créé les instances de base et lance le jeu dans une boucle while.
+
+Cette version du jeu est en ligne, cela veut dire qu'il faut démarrer le serveur
+pour pouvoir jouer, s'il n'est pas démarré demandez à : Zecter#2847 sur Discord.
+"""
+
+#              ______  ______  __  ______  __  __
+#             /\  ___\/\  __ \/\ \/\  ___\/\ \_\ \
+#             \ \___  \ \  _-/\ \ \ \ \___\ \____ \
+#              \/\_____\ \_\   \ \_\ \_____\/\_____\
+#               \/_____/\/_/    \/_/\/_____/\/_____/
+#        __  ______  __  __  ______  __   __  ______  __  __
+#       /\ \/\  __ \/\ \/\ \/\  __ \/\ "-.\ \/\  ___\/\ \_\ \
+#      _\_\ \ \ \/\ \ \ \_\ \ \  __<\ \ \-.  \ \  __\  \____ \
+#     /\_____\ \_____\ \_____\ \_\ \_\ \_\ "\_\ \_____\/\_____\
+#     \/_____/\/_____/\/_____/\/_/ /_/\/_/ \/_/\/_____/\/_____/
+#
+
+
+# GitHub : https://github.com/ImSumire/Spicy-Journey
+# Wiki : https://github.com/ImSumire/Spicy-Journey/wiki
+
+# Benchmark : `python3 -m cProfile -s tottime main.py > exit.txt`
+
+__inspiration__ = (
+    "Ghibli",  # Pour le style graphique
+    "Minecraft",  # Pour la génération du monde
+    "Animal Crossing",  # Pour la vue en top-down
+    "Zelda Breath of the Wild",  # Pour le système de cuisine
+)
+
+# pylint: disable=no-member
+# pylint: disable=invalid-name
+# pylint: disable=no-name-in-module
+
+### Importation des modules
+
+# Gestion des packets
 import socket
 import pickle
-import pygame
-from pygame.locals import *
-from json import load
-from time import perf_counter
-from sys import exit
+from traceback import print_exc
 
-from src.world import World
+# exit() quitte  simplement le script   Python, mais pas  l'environnement Python
+# complet, tandis que sys.exit() quitte à  la fois  le script et l'environnement
+# Python complet.
+import sys
+
+from json import load
+
+# json est  meilleur que yaml car c'est  facile  de l'utiliser, il y a une
+# meilleure compatibilité et de meilleures performances.
+from time import perf_counter
+
+import pygame
+from pygame.locals import K_F3, KEYDOWN, QUIT
+
+# Chargement des classes de source
 from src.player import Player
+from src.world import World
 from src.gui import Gui
 
-
-global seconds, tick, display, temp, players, current_id
 
 ### Création des constantes à partir du fichier config.json
 
 # Charge les données du fichier config grâce à la librairie json
 with open("config.json") as f:
-    config: dict = load(f)
+    CONFIG = load(f)
 
 # Définition des constantes à partir du fichier config
-WIDTH = config["dimensions"]["width"]
-HEIGHT = config["dimensions"]["height"]
-FPS = config["fps"]
-TITLE = config["title"]
+WIDTH = CONFIG["dimensions"]["width"]
+HEIGHT = CONFIG["dimensions"]["height"]
+FPS = CONFIG["fps"]
+TITLE = CONFIG["title"]
 X_CENTER, Y_CENTER = CENTER = (WIDTH // 2, HEIGHT // 2)
+
+SERVER_ADDR = "ulysses.ddns.net"
+SERVER_PORT = 9595
 
 players = {}
 current_id = -1
 
 
 def handle_events():
+    """
+    Cette fonction  traîte toutes les données en relation avec les interactions,
+    comme le fait de fermer la fenêtre de  jeu, l'activation du menu de débogage
+    et d'autres.
+    """
+    _send_quit = "False "
+
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             # Activer l'écran de débogage, échange la valeur booléenne
             if event.key == K_F3:
                 gui.debug = not gui.debug
 
-            elif event.key == K_a:
+            elif event.key == player.harvest:
                 # Position actuelle du joueur
-                x, y = player.pos
+                player_x, player_y = player.pos
 
                 # Position fixée du joueur
-                x_pos_fixed = world.center + round(x - int(x))
-                y_pos_fixed = world.center + round(y - int(y))
+                x_pos_fixed = world.center + round(player_x - int(player_x))
+                y_pos_fixed = world.center + round(player_y - int(player_y))
 
                 # Data aux coordonnées fixées
                 pos = world.coords[y_pos_fixed][x_pos_fixed]
 
+                is_ingredient = int(str(pos[2])[-2:]) in world.ingredients_range
+                is_available = world.vegetation_data[
+                    int(player_x + x_pos_fixed),
+                    int(player_y + y_pos_fixed),
+                ]
+
                 # Si aux coordonnées fixées il y a un ingrédient
-                if (
-                    bool(round(pos[2]))  # S'il y a une végétation
-                    # Si ce n'est pas de l'eau
-                    and not pos[3] > world.water_level
-                    and int(str(pos[2])[-2:])
-                    in world.ingredients_range  # Si c'est un ingrédient
-                    and world.vegetation_data[
-                        int(x + x_pos_fixed),
-                        int(y + y_pos_fixed),
-                    ]  # S'il n'a pas été ramassé
-                ):
+                if is_ingredient and is_available:
                     # Récupérer l'ingrédient
                     gui.mixer.pok.play()
                     world.vegetation_data[
-                        int(x + x_pos_fixed),
-                        int(y + y_pos_fixed),
+                        int(player_x + x_pos_fixed),
+                        int(player_y + y_pos_fixed),
                     ] = False
                     ingredient = world.ingredients_list[
                         int(str(pos[2])[-2:]) - world.ingredients_range[0]
@@ -73,26 +128,31 @@ def handle_events():
                         player.inventory[ingredient] += 1
                     else:
                         player.inventory[ingredient] = 1
-            return "get"
 
         # Fermeture du jeu
         elif event.type == QUIT:
-            return "quit"
+            _send_quit = "True "
+
+    return _send_quit
 
 
-def render():
+def render(_seconds, _tick, _display):
+    """
+    Cette fonction met à jour les données en jeu puis les affiches, ici c'est le
+    monde et l'interface.
+    """
     world.update(int(player.pos.x), int(player.pos.y))
 
     # Récupérer et afficher les sprites
-    for sprite in world.get_sprites(player, players, tick):
-        display.blit(sprite[0], (sprite[1], sprite[2]))
+    for sprite in world.get_sprites(player, tick * 0.04):  # 0.04 ralentie l'animation
+        _display.blit(sprite[0], (sprite[1], sprite[2]))
 
     # Dessiner l'interface graphique
     gui.draw()
 
     # Dessiner l'écran de débogage
     if gui.debug:
-        gui.draw_debug(tick, seconds, clock.get_fps())
+        gui.draw_debug(_tick, _seconds, clock.get_fps())
 
     # Dessiner le fondu
     if gui.fade.active:
@@ -105,38 +165,38 @@ def render():
 
 
 if __name__ == "__main__":
-    # Initialisation, définition du titre et des dimensions de la fenêtre
+    # Initialisation
     pygame.init()
-    pygame.display.set_caption(TITLE)  # "Spicy Journey"
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))  # (1280, 700)
-    display = pygame.Surface(CENTER)  # (640, 350)
+    pygame.display.set_caption(TITLE)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    display = pygame.Surface(CENTER)
     clock = pygame.time.Clock()
-    seconds: float = 0
-    tick: int = 0
 
-    SERVER_ADDR = "ulysses.ddns.net"
-    SERVER_PORT = 9595
+    # Nombre de secondes passées
+    seconds = 0
+    # Nombre de fois qu'il y a eu une update
+    tick = 0
+    # Récupération du temps au démarage
+    start = perf_counter()
 
+    # Connexion au server
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    try:
-        server.connect((SERVER_ADDR, SERVER_PORT))
-    except socket.error as e:
-        print("Failed to connect to server :")
-        print(e)
-        exit()
-    
+    server.connect((SERVER_ADDR, SERVER_PORT))
+
+    # Récupération de l'id
     current_id = int(server.recv(4).decode())
-    name = input("Entrez votre pseudo : ")
-    server.send(name.encode())
-    response = server.recv(4).decode()
+
+    # Création du pseudo
+    response = "False"
     while response == "False":
         name = input("Entrez votre pseudo : ")
         server.send(name.encode())
-        response = server.recv(4).decode()
+        response = server.recv(5).decode()
 
     # Création du monde
+    # pylint: disable=too-many-function-args
     world = World(WIDTH, HEIGHT, int(server.recv(10).decode()))
     print("Seed : %s" % world.seed)
     print("Spawn : %s" % str(world.spawn))
@@ -145,39 +205,62 @@ if __name__ == "__main__":
     player = Player(world)
 
     server.send((str(world.spawn[0]) + " " + str(world.spawn[1])).encode())
-    server.send(("get " + str(player.frame_index) +
-                " " + player.status + player.idle).encode())
+    server.send(
+        (
+            "get False " + str(player.frame_index) + " " + player.status + player.idle
+        ).encode()
+    )
     players = pickle.loads(server.recv(1024))
 
     # Création du GUI (Graphical User Interface)
     gui = Gui(WIDTH, HEIGHT, screen, display, player, world)
 
-    # Démarrage du jeu
+    ### Démarrage du jeu
+    while True:
+        try:
+            send_quit = handle_events()
+            player.update()
+            player.frame_index = player.frame_index % len(
+                world.player_sprites[player.status + player.idle]
+            )
 
-    run = True
-    while run:
-        start = perf_counter()
-        data = handle_events()  # Gestion des pressions sur les boutons
-        if not data:
-            data = "get"
-        player.update()  # Gère l'animation et les mouvements du joueur
-        player.frame_index = player.frame_index % len(world.player[player.status + player.idle])
-        
-        server.send((data + " " + str(player.frame_index) +
-                    " " + player.status + player.idle).encode())
-        if data == "quit":
-            response = server.recv(2).decode()
-            if response == "ok":
-                run = False
-        elif data == "get":
-            players = pickle.loads(server.recv(1024))
+            data = "get "
 
-        render()  # Effectue les calculs et dessine l'écran
+            # Vérifie si les positions ont changées
+            if [player.pos.x, player.pos.y] != players[current_id][1]:
+                data = "move " + str(player.pos.x) + " " + str(player.pos.y) + " "
 
-        clock.tick(FPS)  # Limite les fps à la valeur inscrite dans les configs
+            # Envoie des positions
+            server.send(
+                (
+                    data
+                    + send_quit
+                    + str(player.frame_index)
+                    + " "
+                    + player.status
+                    + player.idle
+                ).encode()
+            )
 
-        tick += 1  # Tick est la valeur représentative du temps en jeu
-        seconds += perf_counter() - start  # Seconds est le temps passé en jeu
-    
-    pygame.quit()
-    exit()
+            data = data.split(" ")
+
+            # Fermeture du jeu
+            if send_quit == "True ":
+                response = server.recv(10).decode()
+                if response == "ok":
+                    pygame.quit()
+                    sys.exit()
+
+            elif data[0] == "get" or data[0] == "move":
+                players = pickle.loads(server.recv(1024))
+
+            render(seconds, tick, display)
+
+            clock.tick(FPS)
+            tick += 1  # Tick est la valeur représentative du temps en jeu
+            seconds = perf_counter() - start  # Seconds est le temps passé en jeu
+
+        except Exception:  # pylint: disable=broad-except
+            print_exc()
+            pygame.quit()
+            sys.exit()

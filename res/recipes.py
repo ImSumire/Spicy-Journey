@@ -3,6 +3,8 @@ Liste des ingrédients dans un dictionnaire avec la liste des ingrédients.
 Le '#' correspond au tag, affichage de 'Un'/'Any' dans le livre de recettes.
 """
 
+# pylint: disable=consider-using-f-string
+
 recipes = {
     "Creamy Heart Soup": ["radish", "#fruit", "#fruit", "milk"],  # 6/5
     "Creamy Seafood Soup": ["milk", "salt", "#vegetable", "#fish"],  # 5/5

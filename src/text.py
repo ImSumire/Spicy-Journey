@@ -17,6 +17,7 @@ fichier.
 #     \/_/  \/_____/\/_/\/_/  \/_/
 #
 
+# pylint: disable=duplicate-code
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join
@@ -30,7 +31,6 @@ if __name__ == "__main__":
 
 # pylint: disable=no-member
 # pylint: disable=invalid-name
-# pylint: disable=duplicate-code
 # pylint: disable=too-few-public-methods
 # pylint: disable= wrong-import-position
 

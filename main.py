@@ -1,57 +1,41 @@
 """
-                   ______  ______  __  ______  __  __    
-                  /\  ___\/\  __ \/\ \/\  ___\/\ \_\ \   
-                  \ \___  \ \  _-/\ \ \ \ \___\ \____ \  
-                   \/\_____\ \_\   \ \_\ \_____\/\_____\ 
-                    \/_____/\/_/    \/_/\/_____/\/_____/ 
-             __  ______  __  __  ______  __   __  ______  __  __    
-            /\ \/\  __ \/\ \/\ \/\  __ \/\ "-.\ \/\  ___\/\ \_\ \   
-           _\_\ \ \ \/\ \ \ \_\ \ \  __<\ \ \-.  \ \  __\  \____ \  
-          /\_____\ \_____\ \_____\ \_\ \_\ \_\ "\_\ \_____\/\_____\ 
-          \/_____/\/_____/\/_____/\/_/ /_/\/_/ \/_/\/_____/\/_____/ 
-
+Ce module  est le script principal du  jeu, il comporte le chargement des autres
+modules, il créé les instances de base et lance le jeu dans une boucle while.
 """
-#
-# L'histoire se déroule dans un monde fantastique rempli de magie et de mystère.
-# Le personnage  que vous contrôlez est  une  jeune femme japonaise nommée Hana,
-# née dans un petit village isolé niché dans une forêt luxuriante.  Hana est une
-# cuisinière  passionnée et a hérité  de  sa grand-mère  un   livre  de recettes
-# traditionnelles japonaises. Les  ingrédients  dont elle a besoin pour cuisiner
-# ces plats sont éparpillés aux quatre coins du monde. Elle a décidé de partir à
-# l'aventure pour les collecter et les cuisiner afin de perpétuer les traditions
-# familiales   et  de rendre hommage à  sa   grand-mère.  Elle se lance  dans un
-# incroyable  voyage  à  travers   la   nature sauvage, découvrant   des secrets
-# mystiques   sur le monde  qui   l'entoure.   En  chemin,   Hana  rencontre des
-# personnages fascinants qui l'aident dans sa quête, comme des marchands qui lui
-# vendent des ingrédients utiles pour ses recettes.
-#
-# Spicy Journey est un jeu qui vous aidera à vous détendre et à  vous relaxer en
-# explorant   un  monde généré   de  manière  procédurale  et  rempli  de forêts
-# luxuriantes. Avec son point de vue  isométrique  et son style pixel art, Spicy
-# Journey est un jeu rétro-visuel qui ne manquera pas de vous captiver.    Spicy
-# Journey offre des possibilités infinies d'exploration et de découverte. Il n'y
-# a pas deux jeux identiques, vous pouvez donc revenir à Spicy Journey encore et
-# encore pour une nouvelle expérience. Si vous cherchez un jeu qui vous aidera à
-# vous détendre et à vous relaxer, ne  cherchez pas plus loin que Spicy Journey.
-# Avec ses magnifiques forêts, son charmant style pixel  art et ses possibilités
-# d'exploration  infinies, c'est le jeu   idéal pour tous ceux   qui cherchent à
-# s'évader dans un monde paisible et immersif.
-#
-# Auteurs : @Zecyl and @ImSumire
-#
-# Requis: python==3.*, pygame, noise, numba
-#
-# Spicy Journey - littéralement "voyage épicé" ou "voyage pimenté"
-# 香り旅 (kaori tabi) - littéralement "voyage d'odeurs agréables"
+
+#              ______  ______  __  ______  __  __
+#             /\  ___\/\  __ \/\ \/\  ___\/\ \_\ \
+#             \ \___  \ \  _-/\ \ \ \ \___\ \____ \
+#              \/\_____\ \_\   \ \_\ \_____\/\_____\
+#               \/_____/\/_/    \/_/\/_____/\/_____/
+#        __  ______  __  __  ______  __   __  ______  __  __
+#       /\ \/\  __ \/\ \/\ \/\  __ \/\ "-.\ \/\  ___\/\ \_\ \
+#      _\_\ \ \ \/\ \ \ \_\ \ \  __<\ \ \-.  \ \  __\  \____ \
+#     /\_____\ \_____\ \_____\ \_\ \_\ \_\ "\_\ \_____\/\_____\
+#     \/_____/\/_____/\/_____/\/_/ /_/\/_/ \/_/\/_____/\/_____/
 #
 
 
-#  __  __    __  ______  ______  ______  ______  ______
-# /\ \/\ "-./  \/\  __ \/\  __ \/\  __ \/\__  _\/\  ___\
-# \ \ \ \ \-./\ \ \  _-/\ \ \/\ \ \  __<\/_/\ \/\ \___  \
-#  \ \_\ \_\ \ \_\ \_\   \ \_____\ \_\ \_\ \ \_\ \/\_____\
-#   \/_/\/_/  \/_/\/_/    \/_____/\/_/ /_/  \/_/  \/_____/
-#
+# GitHub : https://github.com/ImSumire/Spicy-Journey
+# Wiki : https://github.com/ImSumire/Spicy-Journey/wiki
+
+# Benchmark : `python3 -m cProfile -s tottime main.py > exit.txt`
+
+__inspiration__ = (
+    "Ghibli",  # Pour le style graphique
+    "Minecraft",  # Pour la génération du monde
+    "Animal Crossing",  # Pour la vue en top-down
+    "Zelda Breath of the Wild",  # Pour le système de cuisine
+)
+
+# import faulthandler
+# faulthandler.enable()
+
+# pylint: disable=no-member
+# pylint: disable=invalid-name
+# pylint: disable=no-name-in-module
+
+### Importation des modules
 
 import sys
 
@@ -65,72 +49,71 @@ import json
 from time import perf_counter
 
 import pygame
-from pygame.locals import *
+from pygame.locals import K_F3, KEYDOWN, QUIT
 
 # Chargement des classes de source
 from src.player import Player
 from src.world import World
 from src.gui import Gui
 
-
-global seconds, tick, display, temp
-
-#    ______  ______  __   __  ______  __  ______
-#   /\  ___\/\  __ \/\ "-.\ \/\  ___\/\ \/\  ___\
-#   \ \ \___\ \ \/\ \ \ \-.  \ \  __\\ \ \ \ \__ \
-#    \ \_____\ \_____\ \_\\"\_\ \_\   \ \_\ \_____\
-#     \/_____/\/_____/\/_/ \/_/\/_/    \/_/\/_____/
-#
+### Création des constantes à partir du fichier config.json
 
 # Charge les données du fichier config grâce à la librairie json
 with open("config.json") as f:
-    config = json.load(f)
+    CONFIG = json.load(f)
 
-# Accéder aux valeurs de configuration en tant qu'éléments du dictionnaire
-WIDTH = config["dimensions"]["width"]
-HEIGHT = config["dimensions"]["height"]
-FPS = config["fps"]
-TITLE = config["title"]
+# Définition des constantes à partir du fichier config
+WIDTH = CONFIG["dimensions"]["width"]
+HEIGHT = CONFIG["dimensions"]["height"]
+FPS = CONFIG["fps"]
+TITLE = CONFIG["title"]
 X_CENTER, Y_CENTER = CENTER = (WIDTH // 2, HEIGHT // 2)
 
 
 def handle_events():
+    """
+    Cette fonction  traîte toutes les données en relation avec les interactions,
+    comme le fait de fermer la fenêtre de  jeu, l'activation du menu de débogage
+    et d'autres.
+    """
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             # Activer l'écran de débogage, échange la valeur booléenne
             if event.key == K_F3:
                 gui.debug = not gui.debug
 
-            elif event.key == K_a:
+            elif event.key == player.harvest:
                 # Position actuelle du joueur
-                x, y = player.pos
+                player_x, player_y = player.pos
 
                 # Position fixée du joueur
-                x_pos_fixed = world.center + round(x - int(x))
-                y_pos_fixed = world.center + round(y - int(y))
+                x_pos_fixed = world.center + round(player_x - int(player_x))
+                y_pos_fixed = world.center + round(player_y - int(player_y))
 
                 # Data aux coordonnées fixées
                 pos = world.coords[y_pos_fixed][x_pos_fixed]
 
+                is_ingredient = int(str(pos[2])[-2:]) in world.ingredients_range
+                is_available = world.vegetation_data[
+                    int(player_x + x_pos_fixed),
+                    int(player_y + y_pos_fixed),
+                ]
+
                 # Si aux coordonnées fixées il y a un ingrédient
-                if (
-                    bool(round(pos[2]))  # S'il y a une végétation
-                    and not pos[3] > world.water_level
-                    and int(str(pos[2])[-2:]) in world.ingredients_range
-                    and world.vegetation_data[
-                        int(x + x_pos_fixed),
-                        int(y + y_pos_fixed),
-                    ]
-                ):
+                if is_ingredient and is_available:
                     # Récupérer l'ingrédient
                     gui.mixer.pok.play()
                     world.vegetation_data[
-                        int(x + x_pos_fixed),
-                        int(y + y_pos_fixed),
+                        int(player_x + x_pos_fixed),
+                        int(player_y + y_pos_fixed),
                     ] = False
-
-            # elif event.key == K_p:
-            #     gui.mixer.page_sound()
+                    ingredient = world.ingredients_list[
+                        int(str(pos[2])[-2:]) - world.ingredients_range[0]
+                    ]
+                    if ingredient in player.inventory:
+                        player.inventory[ingredient] += 1
+                    else:
+                        player.inventory[ingredient] = 1
 
         # Fermeture du jeu
         elif event.type == QUIT:
@@ -138,20 +121,23 @@ def handle_events():
             sys.exit()
 
 
-def render():
-    # Mise à jour des coordonnées du terrain
+def render(_seconds: float, _tick: int, _display: pygame.Surface):
+    """
+    Cette fonction met à jour les données en jeu puis les affiches, ici c'est le
+    monde et l'interface.
+    """
     world.update(int(player.pos.x), int(player.pos.y))
 
     # Récupérer et afficher les sprites
-    for sprite in world.get_sprites(player, tick):
-        display.blit(sprite[0], (sprite[1], sprite[2]))
+    for sprite in world.get_sprites(player, tick * 0.04):  # 0.04 ralentie l'animation
+        _display.blit(sprite[0], (sprite[1], sprite[2]))
 
     # Dessiner l'interface graphique
     gui.draw()
 
     # Dessiner l'écran de débogage
     if gui.debug:
-        gui.draw_debug(tick, seconds, clock.get_fps())
+        gui.draw_debug(_tick, _seconds, clock.get_fps())
 
     # Dessiner le fondu
     if gui.fade.active:
@@ -160,30 +146,28 @@ def render():
     if gui.photo_fade.active:
         gui.photo_fade.draw(screen)
 
-    # Mise à jour de l'affichage
     pygame.display.flip()
 
 
 if __name__ == "__main__":
-    #    __  __   __  __  ______
-    #   /\ \/\ "-.\ \/\ \/\__  _\
-    #   \ \ \ \ \-.  \ \ \/_/\ \/
-    #    \ \_\ \_\\"\_\ \_\ \ \_\
-    #     \/_/\/_/ \/_/\/_/  \/_/
-    #
-
-    # Initialisation, définition du titre et des dimensions de la fenêtre
+    # Initialisation
     pygame.init()
-    pygame.display.set_caption(TITLE)  # "Spicy Journey"
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))  # (1280, 700)
-    display = pygame.Surface(CENTER)  # (640, 350)
+    pygame.display.set_caption(TITLE)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    display = pygame.Surface(CENTER)
     clock = pygame.time.Clock()
+
+    # Nombre de secondes passées
     seconds = 0
+    # Nombre de fois qu'il y a eu une update
     tick = 0
+    # Récupération du temps au démarage
+    start = perf_counter()
 
     # Création du monde
     world = World(WIDTH, HEIGHT)
     print("Seed : %s" % world.seed)
+    print("Spawn : %s" % str(world.spawn))
 
     # Création du personnage
     player = Player(world)
@@ -191,19 +175,12 @@ if __name__ == "__main__":
     # Création du GUI (Graphical User Interface)
     gui = Gui(WIDTH, HEIGHT, screen, display, player, world)
 
-    #  ______  ______  ______  ______  ______
-    # /\  ___\/\__  _\/\  __ \/\  __ \/\__  _\
-    # \ \___  \/_/\ \/\ \  __ \ \  __<\/_/\ \/
-    #  \/\_____\ \ \_\ \ \_\ \_\ \_\ \_\ \ \_\
-    #   \/_____/  \/_/  \/_/\/_/\/_/ /_/  \/_/
-    #
-
+    ### Démarrage du jeu
     while True:
-        start = perf_counter()
-        handle_events()  # Gestion des pressions sur les boutons
-        player.update()  # Gère l'animation et les mouvements du joueur
-        render()  # Effectue les calculs et dessine l'écran
-        clock.tick(FPS)  # Limite les fps à la valeur inscrite dans les configs
+        handle_events()
+        player.update()
+        render(seconds, tick, display)
 
         tick += 1  # Tick est la valeur représentative du temps en jeu
-        seconds += perf_counter() - start  # Seconds est le temps passé en jeu
+        clock.tick(FPS)
+        seconds = perf_counter() - start  # Seconds est le temps passé en jeu

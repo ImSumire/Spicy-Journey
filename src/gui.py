@@ -167,8 +167,7 @@ class Gui:
         elif os.name == "posix":  # Pour Linux ou macOS
             subprocess.Popen(["xdg-open", path])
         else:
-            # pylint: disable=broad-exception-raised
-            raise Exception("OS not supported")
+            raise Exception("OS not supported")  # pylint: disable=broad-exception-raised
 
     def draw(self):
         """

@@ -30,6 +30,7 @@ if __name__ == "__main__":
 
 # pylint: disable=no-member
 # pylint: disable=invalid-name
+# pylint: disable=duplicate-code
 # pylint: disable=too-few-public-methods
 # pylint: disable= wrong-import-position
 

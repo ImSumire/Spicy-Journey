@@ -26,6 +26,7 @@ if __name__ == "__main__":
     sys.exit()
 
 # pylint: disable=invalid-name
+# pylint: disable=duplicate-code
 # pylint: disable=no-name-in-module
 # pylint: disable=wrong-import-position
 # pylint: disable= c-extension-no-member

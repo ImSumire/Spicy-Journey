@@ -1,3 +1,8 @@
+"""
+Liste des ingrédients dans un dictionnaire avec la liste des ingrédients.
+Le '#' correspond au tag, affichage de 'Un'/'Any' dans le livre de recettes.
+"""
+
 recipes = {
     "Creamy Heart Soup": ["radish", "#fruit", "#fruit", "milk"],  # 6/5
     "Creamy Seafood Soup": ["milk", "salt", "#vegetable", "#fish"],  # 5/5
@@ -37,4 +42,4 @@ if __name__ == "__main__":
             if i not in ingredients:
                 ingredients.append(i)
 
-    print("List of ingredients : %s" % (', '.join(sorted([_ for _ in ingredients]))))
+    print("List of ingredients : %s" % (', '.join(sorted(ingredients))))

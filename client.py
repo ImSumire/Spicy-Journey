@@ -1,55 +1,23 @@
-"""
-               ______  ______  __  ______  __  __    
-              /\  ___\/\  __ \/\ \/\  ___\/\ \_\ \   
-              \ \___  \ \  _-/\ \ \ \ \___\ \____ \  
-               \/\_____\ \_\   \ \_\ \_____\/\_____\ 
-                \/_____/\/_/    \/_/\/_____/\/_____/ 
-         __  ______  __  __  ______  __   __  ______  __  __    
-        /\ \/\  __ \/\ \/\ \/\  __ \/\ "-.\ \/\  ___\/\ \_\ \   
-       _\_\ \ \ \/\ \ \ \_\ \ \  __<\ \ \-.  \ \  __\  \____ \  
-      /\_____\ \_____\ \_____\ \_\ \_\ \_\ "\_\ \_____\/\_____\ 
-      \/_____/\/_____/\/_____/\/_/ /_/\/_/ \/_/\/_____/\/_____/ 
-
-"""
-
-# GitHub : https://github.com/ImSumire/Spicy-Journey
-
-__inspiration__ = (
-    "Ghibli",  # Pour le style graphique
-    "Minecraft",  # Pour la génération du monde
-    "Animal Crossing",  # Pour la vue en top-down
-    "Zelda Breath of the Wild",  # Pour le système de cuisine
-)
-
-### Importation des modules
-
-import sys
-
-# exit() quitte  simplement le script   Python, mais pas  l'environnement Python
-# complet, tandis que sys.exit() quitte à  la fois  le script et l'environnement
-# Python complet.
-import json
-
-# json est  meilleur que yaml car c'est  facile  de l'utiliser, il y a une
-# meilleure compatibilité et de meilleures performances.
-from time import perf_counter
-
+import socket
+import pickle
 import pygame
 from pygame.locals import *
+from json import load
+from time import perf_counter
+from sys import exit
 
-# Chargement des classes de source
-from src.player import Player
 from src.world import World
+from src.player import Player
 from src.gui import Gui
 
 
-global seconds, tick, display, temp
+global seconds, tick, display, temp, players, current_id
 
 ### Création des constantes à partir du fichier config.json
 
 # Charge les données du fichier config grâce à la librairie json
 with open("config.json") as f:
-    config: dict = json.load(f)
+    config: dict = load(f)
 
 # Définition des constantes à partir du fichier config
 WIDTH = config["dimensions"]["width"]
@@ -57,6 +25,9 @@ HEIGHT = config["dimensions"]["height"]
 FPS = config["fps"]
 TITLE = config["title"]
 X_CENTER, Y_CENTER = CENTER = (WIDTH // 2, HEIGHT // 2)
+
+players = {}
+current_id = -1
 
 
 def handle_events():
@@ -80,7 +51,8 @@ def handle_events():
                 # Si aux coordonnées fixées il y a un ingrédient
                 if (
                     bool(round(pos[2]))  # S'il y a une végétation
-                    and not pos[3] > world.water_level  # Si ce n'est pas de l'eau
+                    # Si ce n'est pas de l'eau
+                    and not pos[3] > world.water_level
                     and int(str(pos[2])[-2:])
                     in world.ingredients_range  # Si c'est un ingrédient
                     and world.vegetation_data[
@@ -101,18 +73,18 @@ def handle_events():
                         player.inventory[ingredient] += 1
                     else:
                         player.inventory[ingredient] = 1
+            return "get"
 
         # Fermeture du jeu
         elif event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+            return "quit"
 
 
 def render():
     world.update(int(player.pos.x), int(player.pos.y))
 
     # Récupérer et afficher les sprites
-    for sprite in world.get_sprites(player, tick):
+    for sprite in world.get_sprites(player, players, tick):
         display.blit(sprite[0], (sprite[1], sprite[2]))
 
     # Dessiner l'interface graphique
@@ -142,25 +114,70 @@ if __name__ == "__main__":
     seconds: float = 0
     tick: int = 0
 
+    SERVER_ADDR = "ulysses.ddns.net"
+    SERVER_PORT = 9595
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    try:
+        server.connect((SERVER_ADDR, SERVER_PORT))
+    except socket.error as e:
+        print("Failed to connect to server :")
+        print(e)
+        exit()
+    
+    current_id = int(server.recv(4).decode())
+    name = input("Entrez votre pseudo : ")
+    server.send(name.encode())
+    response = server.recv(4).decode()
+    while response == "False":
+        name = input("Entrez votre pseudo : ")
+        server.send(name.encode())
+        response = server.recv(4).decode()
+
     # Création du monde
-    world = World(WIDTH, HEIGHT)
+    world = World(WIDTH, HEIGHT, int(server.recv(10).decode()))
     print("Seed : %s" % world.seed)
     print("Spawn : %s" % str(world.spawn))
 
     # Création du personnage
     player = Player(world)
 
+    server.send((str(world.spawn[0]) + " " + str(world.spawn[1])).encode())
+    server.send(("get " + str(player.frame_index) +
+                " " + player.status + player.idle).encode())
+    players = pickle.loads(server.recv(1024))
+
     # Création du GUI (Graphical User Interface)
     gui = Gui(WIDTH, HEIGHT, screen, display, player, world)
 
-    ### Démarrage du jeu
+    # Démarrage du jeu
 
-    while True:
+    run = True
+    while run:
         start = perf_counter()
-        handle_events()  # Gestion des pressions sur les boutons
+        data = handle_events()  # Gestion des pressions sur les boutons
+        if not data:
+            data = "get"
         player.update()  # Gère l'animation et les mouvements du joueur
+        player.frame_index = player.frame_index % len(world.player[player.status + player.idle])
+        
+        server.send((data + " " + str(player.frame_index) +
+                    " " + player.status + player.idle).encode())
+        if data == "quit":
+            response = server.recv(2).decode()
+            if response == "ok":
+                run = False
+        elif data == "get":
+            players = pickle.loads(server.recv(1024))
+
         render()  # Effectue les calculs et dessine l'écran
+
         clock.tick(FPS)  # Limite les fps à la valeur inscrite dans les configs
 
         tick += 1  # Tick est la valeur représentative du temps en jeu
         seconds += perf_counter() - start  # Seconds est le temps passé en jeu
+    
+    pygame.quit()
+    exit()

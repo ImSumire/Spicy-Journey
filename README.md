@@ -1,8 +1,9 @@
 <h1 align="center">🧭 Spicy Journey - 香り旅 - Voyage épicé
   <br>
-  <img alt="Statue In dev" src="https://img.shields.io/badge/STATUE-IN%20DEV-78b444?style=for-the-badge">
-  <img alt="Version 0.1.8" src="https://img.shields.io/badge/VERSION-0.1.8-53d0a2?style=for-the-badge">
-  <img alt="Licence GNU" src="https://img.shields.io/badge/LICENCE-GNU-fb7f53?style=for-the-badge">
+  <img alt="Statue In dev" src="https://img.shields.io/badge/STATUE-IN%20DEV-78b444">
+  <img alt="Version 0.1.8" src="https://img.shields.io/badge/VERSION-0.1.8-53d0a2">
+  <img alt="Licence GNU" src="https://img.shields.io/badge/LICENCE-GNU-fb7f53">
+  <img alt="Pylint" src="https://github.com/ImSumire/Spicy-Journey/actions/workflows/pylint.yml/badge.svg?branch=main">
 </h1>
 
 <img alt="Logo" src="https://raw.githubusercontent.com/ImSumire/Spicy-Journey/main/res/sprites/logo.png" align=right>

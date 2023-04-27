@@ -24,6 +24,7 @@ if __name__ == "__main__":
 # pylint: disable=invalid-name
 # pylint: disable=too-many-arguments
 # pylint: disable=wrong-import-position
+# pylint: disable=consider-using-f-string
 # pylint: disable=too-many-instance-attributes
 
 import os
@@ -164,6 +165,7 @@ class Gui:
         elif os.name == "posix":  # Pour Linux ou macOS
             subprocess.Popen(["xdg-open", path])
         else:
+            # pylint: disable=broad-exception-raised
             raise Exception("OS not supported")
 
     def draw(self):

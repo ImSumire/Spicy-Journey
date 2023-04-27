@@ -15,14 +15,14 @@ def get_langs():
         lang.replace(".lang", "") for lang in os.listdir("res/lang")
     ]
 
-def load_lang(file):
+def load_lang(file_path):
     """
     Benchmark :
     100000 lignes : 0.197 secondes
     ~ 0,00000197/lignes
     """
 
-    with open("res/lang/%s.lang" % file, 'r', encoding="utf-8") as file:
+    with open("res/lang/%s.lang" % file_path, 'r', encoding="utf-8") as file:
         lines = file.readlines()
 
     words = {}

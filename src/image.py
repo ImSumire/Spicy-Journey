@@ -11,6 +11,7 @@ contenue du GUI.
 #   \/_/\/_/  \/_/\/_/\/_/\/_____/\/_____/
 #
 
+# pylint: disable=duplicate-code
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join
@@ -22,7 +23,6 @@ if __name__ == "__main__":
 
     sys.exit()
 
-# pylint: disable=duplicate-code
 # pylint: disable=wrong-import-position
 # pylint: disable=too-few-public-methods
 

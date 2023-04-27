@@ -10,6 +10,7 @@ rend très bien car il donne une impression de vie et de mouvement avec le vent.
 #   \/_____/\/_____/\/_/\/_/\/_/
 #
 
+# pylint: disable=duplicate-code
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join
@@ -22,7 +23,6 @@ if __name__ == "__main__":
     sys.exit()
 
 # pylint: disable=invalid-name
-# pylint: disable=duplicate-code
 # pylint: disable=wrong-import-position
 # pylint: disable=too-few-public-methods
 # pylint: disable=too-many-instance-attributes

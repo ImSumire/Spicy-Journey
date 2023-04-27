@@ -1,7 +1,3 @@
-## Se pueden añadir comentarios en cualquier parte de una línea valida empezando
-## por '##'.
-
-## Translator note:
 ## Traduit par Deepl.com
 
 es=Espanol
@@ -13,6 +9,8 @@ settings.leaves=Hojas
 settings.godray=Rayos de sol
 settings.switch=Teclas de interruptor
 settings.language=Lengua
+settings.music=Musica
+settings.ambience=Atmosfera
 
 on=Encendido
 off=Apagado
@@ -29,3 +27,29 @@ menu.book=Recetario
 menu.photo=Foto
 
 debug.seed=Semilla
+
+apple=Manzana
+berry=Bayas
+carrot=Zanahoria
+mushroom1=Champinon rojo
+mushroom2=Champinon de Emoria
+radish=Rábano
+rice=Bushel de arroz
+wheat=Trigo
+
+milk=Leche
+butter=Mantequilla
+chicken=Pollo
+egg=Huevo
+salt=Sal
+
+fish=Pescado
+herb=Hierba
+meat=Carne
+spice=Especias
+
+fruit=Fruta
+vegetable=Verduras
+mushroom=Champinon
+
+any=En

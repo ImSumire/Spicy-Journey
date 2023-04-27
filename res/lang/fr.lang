@@ -1,5 +1,4 @@
-## Des commentaires peuvent être ajoutés n'importe où sur une ligne valide en
-## commençant par '##'
+## Des commentaires peuvent être ajoutés avec '##'
 
 fr=Francais
 
@@ -10,6 +9,8 @@ settings.leaves=Feuilles
 settings.godray=Rayons de soleil
 settings.switch=Echanger les touches
 settings.language=Langue
+settings.music=Musique
+settings.ambience=Ambiance
 
 on=Active
 off=Desactive
@@ -26,3 +27,29 @@ menu.book=Recettes
 menu.photo=Photo
 
 debug.seed=Graine
+
+apple=Pomme
+berry=Baie
+carrot=Carotte
+mushroom1=Champignon rouge
+mushroom2=Champignon Emorien
+radish=Radis
+rice=Boisseau de riz
+wheat=Ble
+
+milk=Lait
+butter=Beurre
+chicken=Poulet
+egg=Oeuf
+salt=Sel
+
+fish=Poisson
+herb=Herbe aromatique
+meat=Viande
+spice=Epice
+
+fruit=Fruit
+vegetable=Legume
+mushroom=Champignon
+
+any=Un

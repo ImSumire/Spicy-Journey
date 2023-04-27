@@ -1,7 +1,3 @@
-## Des commentaires peuvent être ajoutés n'importe où sur une ligne valide en
-## commençant par '##'
-
-## Translator note:
 ## Traduit par Deepl.com
 
 pt=Portugues
@@ -13,6 +9,8 @@ settings.leaves=Folhas
 settings.godray=Raios de sol
 settings.switch=Mudanca das chaves
 settings.language=Lingua
+settings.music=Musica
+settings.ambience=Atmosfera
 
 on=Ligar
 off=Desligar
@@ -29,3 +27,29 @@ menu.book=Receitas
 menu.photo=Foto
 
 debug.seed=Semente
+
+apple=Maçã
+berry=Baga
+carrot=Cenoura
+mushroom1=Cogumelo Vermelho
+mushroom2=Cogumelo Emorian
+radish=Rabanete
+rice=Bushel de arroz
+wheat=Trigo
+
+milk=Leite
+butter=Manteiga
+chicken=Galinha
+egg=Ovo
+salt=Sal
+
+fish=Peixes
+herb=Erva
+meat=Carne
+spice=Especiaria
+
+fruit=Fruta
+vegetable=Vegetal
+mushroom=Cogumelo
+
+any=Qualquer

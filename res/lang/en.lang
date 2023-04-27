@@ -9,6 +9,8 @@ settings.leaves=Leaves
 settings.godray=Godrays
 settings.switch=Switch keys
 settings.language=Language
+settings.music=Music
+settings.ambience=Ambience
 
 on=On
 off=Off
@@ -25,3 +27,29 @@ menu.book=Recipes
 menu.photo=Photo
 
 debug.seed=Seed
+
+apple=Apple
+berry=Berry
+carrot=Carrot
+mushroom1=Red Mushroom
+mushroom2=Emorian Mushroom
+radish=Radish
+rice=Bushel of rice
+wheat=Wheat
+
+milk=Milk
+butter=Butter
+chicken=Chicken
+egg=Egg
+salt=Salt
+
+fish=Fish
+herb=Herb
+meat=Meat
+spice=Spice
+
+fruit=Fruit
+mushroom=Mushroom
+vegetable=Vegetable
+
+any=Any

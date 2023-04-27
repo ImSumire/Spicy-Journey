@@ -10,6 +10,7 @@ admet un ensemble de méthodes qui traîtent les données.
 #   \/_/   \/_/\/_____/\/_/ /_/\/_____/\/____/
 #
 
+# pylint: disable=duplicate-code
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join

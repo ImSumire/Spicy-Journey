@@ -12,6 +12,7 @@ bouton, ainsi que des fonctions à exécuter lorsque le bouton est cliqué.
 #   \/_____/\/_____/  \/_/    \/_/  \/_____/\/_/ \/_/
 #
 
+# pylint: disable=duplicate-code
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join
@@ -25,7 +26,6 @@ if __name__ == "__main__":
 
 # pylint: disable=no-member
 # pylint: disable=invalid-name
-# pylint: disable=duplicate-code
 # pylint: disable=too-many-arguments
 # pylint: disable=wrong-import-position
 # pylint: disable=too-many-instance-attributes

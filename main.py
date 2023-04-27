@@ -34,6 +34,7 @@ __inspiration__ = (
 # pylint: disable=no-member
 # pylint: disable=invalid-name
 # pylint: disable=no-name-in-module
+# pylint: disable=consider-using-f-string
 
 ### Importation des modules
 

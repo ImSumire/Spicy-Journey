@@ -1,3 +1,8 @@
+"""
+Ce module  contient l'implémentation de la classe Godray, qui est responsable de
+l'affichage de l'effet des godrays sur la surface fournie.
+"""
+
 #  ______  ______  _____   ______  ______  __  __
 # /\  ___\/\  __ \/\  __-./\  __ \/\  __ \/\ \_\ \
 # \ \ \__ \ \ \/\ \ \ \/\ \ \  __<\ \  __ \ \____ \
@@ -5,16 +10,30 @@
 #   \/_____/\/_____/\/____/ \/_/ /_/\/_/\/_/\/_____/
 #
 
-from src.tools.resize import resize
+# Pour pouvoir lancer le programme avec n'importe quel fichier
+if __name__ == "__main__":
+    from os.path import dirname, realpath, join
+    from subprocess import call
+    import sys
+
+    DIR_PATH = dirname(realpath(__file__))
+    call(["python3", join(DIR_PATH, "../main.py")])
+
+    sys.exit()
+
+# pylint: disable=wrong-import-position
+# pylint: disable=too-few-public-methods
+
 import pygame
+from src.tools.resize import resize
 
 
 class Godray:
-    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
-    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
-    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
-    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
-    # attribut __dict__ pour la classe.
+    """
+    La classe  Godray peut être initialisée en passant un objet pygame.Surface à
+    son constructeur. Une fois initialisé, l'objet  ne changera plus, il ne sera
+    qu'affiché sur la surface du jeu.
+    """
 
     __slots__ = (
         # Surface
@@ -24,7 +43,7 @@ class Godray:
         "active",
     )
 
-    def __init__(self, width, height, surf):
+    def __init__(self, surf):
         # Surface
         self.surf = surf
 
@@ -35,4 +54,7 @@ class Godray:
         self.active = True
 
     def draw(self):
+        """
+        Affichage simple des rayons de soleil.
+        """
         self.surf.blit(self.image, (0, 0))

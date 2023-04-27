@@ -1,3 +1,7 @@
+"""
+Doc
+"""
+
 #  ______  __  __  __
 # /\  ___\/\ \/\ \/\ \
 # \ \ \__ \ \ \_\ \ \ \
@@ -5,33 +9,58 @@
 #   \/_____/\/_____/\/_/
 #
 
-from src.tools.lang import load_lang, get_langs
-from res.recipes import recipes
-from src.godray import Godray
-from src.button import Button
-from src.image import Image
-from src.mixer import Mixer
-from src.fade import Fade
-from src.leaf import Leaf
-from src.text import Text
+# Pour pouvoir lancer le programme avec n'importe quel fichier
+if __name__ == "__main__":
+    from os.path import dirname, realpath, join
+    from subprocess import call
+    import sys
 
-from datetime import datetime
-import subprocess
-import pygame
+    DIR_PATH = dirname(realpath(__file__))
+    call(["python3", join(DIR_PATH, "../main.py")])
+
+    sys.exit()
+
+# pylint: disable=no-member
+# pylint: disable=invalid-name
+# pylint: disable=too-many-arguments
+# pylint: disable=wrong-import-position
+# pylint: disable=too-many-instance-attributes
+
 import os
+import subprocess
+from datetime import datetime
+import pygame
+
+from src.text import Text
+from src.leaf import Leaf
+from src.fade import Fade
+from src.mixer import Mixer
+from src.image import Image
+from src.button import Button
+from src.godray import Godray
+from src.tools.resize import resize
+from src.tools.lang import load_lang, get_langs
+
+from res.recipes import recipes
 
 
-# Création d'une fonction qui ne fait rien
 def nothing():
-    pass
+    """
+    Création d'une fonction qui ne fait rien.
+    """
+    return
 
 
 # Initialisation de la police
 pygame.init()
-font = pygame.font.Font("res/font/8-bit.ttf", 12)
+FONT = pygame.font.Font("res/font/8-bit.ttf", 12)
 
 
 class Gui:
+    """
+    Doc
+    """
+
     def __init__(self, width, height, surf, display, player, world):
         # Dimensions
         self.width = width
@@ -43,7 +72,7 @@ class Gui:
         self.mixer = Mixer()
         self.player = player
         self.display = display
-        self.godray = Godray(width, height, surf)
+        self.godray = Godray(surf)
         self.leaves = [Leaf(height) for _ in range(200)]
 
         # Langue
@@ -53,7 +82,7 @@ class Gui:
         self.lang = load_lang(self.lang_id)
 
         # Fondues
-        self.fade = Fade(width, height, 2, surf)
+        self.fade = Fade(width, height, 3, surf)
         self.photo_fade = Fade(width, height, 20, surf)
         self.ui_fade = Fade(width, height, 0, surf, (0, 0, 0))
         self.ui_fade.display.set_alpha(35)
@@ -77,26 +106,48 @@ class Gui:
         self.book = Image("res/sprites/book.png", (width // 2 - 187, 80))
 
         # Contenues
+        self.content = []
         self.title()
 
         # Écran de débogage
         self.debug = False
 
-        # Recettes
-        self.recipes = [
-            "\n\n".join(
-                (
-                    key,
-                    "\n".join(
-                        [
-                            "- " + ingredient.replace("#", "any ")
-                            for ingredient in ingredients
-                        ]
-                    ),
-                )
+        self.load_recipes()
+
+    def load_recipes(self):
+        """
+        Doc
+        """
+        # Création de la liste de recettes
+        self.recipes = []
+
+        # Parcours du dictionnaire de recettes
+        for key, ingredients in recipes.items():
+            # Formatage de chaque recette
+            # recipe = self.lang[key] + "\n\n"
+            recipe = key + "\n\n"
+
+            for ingredient in ingredients:
+                if ingredient.startswith("#"):
+                    recipe += "- "
+                    recipe += self.lang["any"] + " "
+                    recipe += self.lang[ingredient.replace("#", "")]
+                    recipe += "\n"
+                else:
+                    recipe += "- " + self.lang[ingredient] + "\n"
+
+            # Ajout de la recette formatée à la liste
+            self.recipes.append(recipe)
+
+        # Ingrédients
+        self.ingredient_images = {}
+        for ingredient in self.world.ingredients_list:
+            self.ingredient_images[ingredient] = resize(
+                pygame.image.load(
+                    "res/sprites/Ingredients/%s.png" % ingredient
+                ).convert_alpha(),
+                1.4,
             )
-            for key, ingredients in recipes.items()
-        ]
 
     @staticmethod
     def open_dir():
@@ -116,6 +167,9 @@ class Gui:
             raise Exception("OS not supported")
 
     def draw(self):
+        """
+        Doc
+        """
         # Affichage des feuilles
         for leaf in self.leaves:
             leaf.update()
@@ -139,12 +193,31 @@ class Gui:
         for element in self.content:
             element.draw(self.surf)
 
+        for index, (ingredient, number) in enumerate(self.player.inventory.items()):
+            self.surf.blit(
+                self.ingredient_images[ingredient], (self.width - 52, 20 + 52 * index)
+            )
+            self.surf.blit(
+                FONT.render(
+                    "x " + str(number),  # Texte
+                    True,  # Anti-aliasing
+                    (255, 255, 255),  # Couleur
+                ),
+                (self.width - 100, 30 + 52 * index),
+            )
+
     # Lancer le jeu après l'écran titre
     def start(self):
+        """
+        Doc
+        """
         self.fade.active = True
         self.fade.func = self.main
 
     def take_photo(self):
+        """
+        Doc
+        """
         self.mixer.photo_sound.play()
         pygame.image.save(
             self.surf,
@@ -167,6 +240,9 @@ class Gui:
 
     # Écran titre
     def title(self):
+        """
+        Doc
+        """
         self.ui_fade.active = False
         self.content = [
             Button(self.lang["world.enter"], self.title_play, self.start),
@@ -179,6 +255,9 @@ class Gui:
         ]
 
     def book_ui(self, page=0):
+        """
+        Doc
+        """
         self.mixer.page_sound()
         self.ui_fade.active = True
         self.player.move = False
@@ -207,6 +286,9 @@ class Gui:
 
     # Paramètres avec ou sans retour à l'écran titre
     def settings_ui(self, title: bool = False):
+        """
+        Doc
+        """
         self.ui_fade.active = True
         self.player.move = False
         self.content = [
@@ -278,10 +360,49 @@ class Gui:
                     self.settings_ui(title),
                 ),
             ),
+            Button(
+                "%s : %s"
+                % (
+                    self.lang["settings.music"],
+                    (self.lang["on"] if self.mixer.playing_music else self.lang["off"]),
+                ),
+                (self.width // 2, self.height // 2 - 120),
+                lambda: (
+                    self.mixer.stop_music()
+                    if self.mixer.playing_music
+                    else self.mixer.play(),
+                    setattr(self.mixer, "playing_music", not self.mixer.playing_music),
+                    self.settings_ui(title),
+                ),
+            ),
+            Button(
+                "%s : %s"
+                % (
+                    self.lang["settings.ambience"],
+                    (
+                        self.lang["on"]
+                        if self.mixer.playing_ambient
+                        else self.lang["off"]
+                    ),
+                ),
+                (self.width // 2, self.height // 2 - 160),
+                lambda: (
+                    self.mixer.stop_ambience()
+                    if self.mixer.playing_ambient
+                    else self.mixer.play_ambience(),
+                    setattr(
+                        self.mixer, "playing_ambient", not self.mixer.playing_ambient
+                    ),
+                    self.settings_ui(title),
+                ),
+            ),
         ]
 
     # Menu principal sans animation
     def main(self):
+        """
+        Doc
+        """
         self.ui_fade.active = False
         self.player.exist = self.player.move = True
         self.content = [
@@ -290,6 +411,9 @@ class Gui:
 
     # Menu principal fermé
     def menu_closed(self):
+        """
+        Doc
+        """
         self.ui_fade.active = False
         self.content = [
             Button(self.lang["menu.album"], self.album, nothing, end=self.menu),
@@ -301,6 +425,9 @@ class Gui:
 
     # Menu principal ouvert
     def menu_opened(self):
+        """
+        Doc
+        """
         self.ui_fade.active = False
         self.content = [
             Button(self.lang["menu.album"], self.menu, self.open_dir, end=self.album),
@@ -314,6 +441,9 @@ class Gui:
 
     # Dessinez chaque ligne de l'écran de débogage
     def draw_debug(self, tick, seconds, fps):
+        """
+        Doc
+        """
         x, y = self.player.pos
         pos = self.world.coords[self.world.center + round(y - int(y))][
             self.world.center + round(x - int(x))
@@ -330,7 +460,7 @@ class Gui:
 
         for index, line in enumerate(debug_lines.split("\n")):
             self.surf.blit(
-                font.render(
+                FONT.render(
                     line,  # Texte
                     True,  # Anti-aliasing
                     (255, 255, 255),  # Couleur

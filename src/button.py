@@ -1,3 +1,10 @@
+"""
+Le module  définit une classe Button,  qui représente un bouton dans l'interface
+utilisateur.  La classe a des  attributs  pour  stocker  l'état  du  bouton, les
+couleurs  à  utiliser pour  l'affichage,  la position, la taille et  le texte du
+bouton, ainsi que des fonctions à exécuter lorsque le bouton est cliqué.
+"""
+
 #  ______  __  __  ______  ______  ______  __   __
 # /\  __ \/\ \/\ \/\__  _\/\__  _\/\  __ \/\ "-.\ \
 # \ \  __<\ \ \_\ \/_/\ \/\/_/\ \/\ \ \/\ \ \ \-.  \
@@ -5,26 +12,47 @@
 #   \/_____/\/_____/  \/_/    \/_/  \/_____/\/_/ \/_/
 #
 
+# Pour pouvoir lancer le programme avec n'importe quel fichier
+if __name__ == "__main__":
+    from os.path import dirname, realpath, join
+    from subprocess import call
+    import sys
+
+    DIR_PATH = dirname(realpath(__file__))
+    call(["python3", join(DIR_PATH, "../main.py")])
+
+    sys.exit()
+
+# pylint: disable=no-member
+# pylint: disable=invalid-name
+# pylint: disable=too-many-arguments
+# pylint: disable=wrong-import-position
+# pylint: disable=too-many-instance-attributes
+
 from math import cos
 import pygame
 
 
-# Création d'une fonction qui ne fait rien
 def nothing():
-    pass
+    """
+    Création d'une fonction qui ne fait rien.
+    """
+    return
 
 
 # Initialisation de la police
 pygame.init()
-font = pygame.font.Font("res/font/8-bit.ttf", 12)
+FONT = pygame.font.Font("res/font/8-bit.ttf", 12)
 
 
 class Button:
-    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
-    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
-    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
-    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
-    # attribut __dict__ pour la classe.
+    """
+    Les instances  de la classe Button  ont   une méthode draw pour  afficher le
+    bouton sur l'écran, une méthode check pour détecter si  la souris est sur le
+    bouton  et exécuter les  fonctions appropriées lorsqu'il est  cliqué, et une
+    méthode  animate pour  effectuer  une animation si l'attribut  animation est
+    défini à True.
+    """
 
     __slots__ = (
         "pressed",
@@ -50,8 +78,8 @@ class Button:
         "delta",
     )
 
-    def __init__(self, text, pos, function, end=None, destroy=False):
-        size = font.size(text)
+    def __init__(self, text, pos, function, end=None):
+        size = FONT.size(text)
         width = size[0] + 30
         height = size[1] + 3
 
@@ -69,7 +97,7 @@ class Button:
             (x - width // 2, y - height // 2),  # Centré
             (width, height),
         )
-        self.text_surf = font.render(text, True, (255, 255, 255))
+        self.text_surf = FONT.render(text, True, (255, 255, 255))
         self.text_rect = self.text_surf.get_rect(center=self.rect.center)
 
         # Au clic

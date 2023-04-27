@@ -1,3 +1,8 @@
+"""
+Ce module  permet de gérer le monde,  il comporte la classe principale World qui
+admet un ensemble de méthodes qui traîtent les données.
+"""
+
 #  __     __  ______  ______  __      _____
 # /\ \  _ \ \/\  __ \/\  __ \/\ \    /\  __-.
 # \ \ \/ ".\ \ \ \/\ \ \  __<\ \ \___\ \ \/\ \
@@ -5,22 +10,42 @@
 #   \/_/   \/_/\/_____/\/_/ /_/\/_____/\/____/
 #
 
-from src.tools.memoize import memoize
+# Pour pouvoir lancer le programme avec n'importe quel fichier
+if __name__ == "__main__":
+    from os.path import dirname, realpath, join
+    from subprocess import call
+    import sys
 
+    DIR_PATH = dirname(realpath(__file__))
+    call(["python3", join(DIR_PATH, "../main.py")])
+
+    sys.exit()
+
+# pylint: disable= invalid-name
+# pylint: disable= wrong-import-position
+
+import csv
+from math import cos
 from random import randint
 from noise import snoise2
-from math import sin, cos
 import pygame
 
-# Il se peut que votre python ne soit pas compatible avec numba, je créé donc un
-# décorateur pour éviter une erreur et donc faire tourner le jeu sans numba.
+from src.tools.memoize import memoize
+
 try:
     from numba import njit
 
 except ImportError:
     print("Numba lib wasn't installed, please install it : pip install numba")
 
+    # pylint: disable= unused-argument
     def njit(**kw):
+        """
+        Il se  peut que votre python ne  soit pas compatible avec numba, je créé
+        donc un décorateur pour éviter une erreur  et donc faire tourner  le jeu
+        sans numba.
+        """
+
         def wrap(func):
             def inner(*args, **kwargs):
                 return func(*args, **kwargs)
@@ -32,20 +57,30 @@ except ImportError:
 
 @memoize
 @njit(fastmath=True)
-def iso(x, y, x_offset, y_offset):
-    """Calculates isometric perspective coordinates."""
-    # iso_x = x_offset + x * 16 - y * 16
-    # iso_y = y_offset + x * 8 + y * 8
-    # return iso_x, iso_y
-    return (x_offset + x * 16 - y * 16, y_offset + x * 8 + y * 8)
+def iso(_x, _y, x_offset, y_offset):
+    """
+    Calcule les coordonnées isométriques de la perspective.
+
+    Version simplifié :
+    iso_x = x_offset + x * 16 - y * 16
+    iso_y = y_offset + x * 8 + y * 8
+    return iso_x, iso_y
+    """
+    return (x_offset + _x * 16 - _y * 16, y_offset + _x * 8 + _y * 8)
 
 
-class World:
-    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
-    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
-    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
-    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
-    # attribut __dict__ pour la classe.
+class World:  # pylint: disable= too-many-instance-attributes
+    """
+    La classe  World est utilisée pour créer  un  monde de jeu. Elle utilise des
+    sprites  pour le terrain, l'eau et  la végétation.  Cette classe  utilise la
+    méthode slots pour une  meilleure performance en termes  d'espace mémoire et
+    de  vitesse  d'accès. Le  constructeur  prend en paramètre la  largeur et la
+    hauteur du monde de jeu. La méthode found_spawn est utilisée pour générer de
+    manière aléatoire des coordonnées pour le centre du monde et vérifier si ces
+    coordonnées  sont valides. La  classe   contient  également   des constantes
+    d'affichage, des paramètres de   génération  de terrain et des  variables de
+    base.
+    """
 
     __slots__ = (
         # Sprites
@@ -54,6 +89,8 @@ class World:
         "vegetation",
         "vegetation_size",
         "vegetation_shadows",
+        "vegetation_list",
+        "ingredients_list",
         "ingredients_range",
         # Paramètres de génération du terrain
         "frequence",
@@ -62,6 +99,7 @@ class World:
         "v_amplitude",
         "v_frequence",
         "render_distance",
+        "render_distance_range",
         # Constantes d'affichage
         "center",
         "x_center",
@@ -82,35 +120,25 @@ class World:
         self.block = pygame.image.load("res/sprites/Terrain/grass.png").convert_alpha()
         self.water = pygame.image.load("res/sprites/Terrain/water.png").convert_alpha()
         self.vegetation = []
-        self.vegetation_size = []
         self.vegetation_shadows = []
-        for path in [
+
+        # Vegetation data
+        self.vegetation_size = []
+        self.vegetation_list = []
+        self.ingredients_list = ["rice", "apple", "carrot", "radish", "wheat"]
+
+        with open("res/vegetation.csv", "r") as file:
+            reader = csv.reader(file)
+            next(reader)  # saute la première ligne
+            for row in reader:
+                if row:  # si ligne n'est pas vide
+                    element, count = row
+                    self.vegetation_list += [element] * int(count)
+
+        for path in self.vegetation_list:
             # Arbres (0-79)
-            *["tree1"] * 17,
-            *["tree2"] * 17,
-            *["tree3"] * 17,
-            *["tree4"] * 10,
-            *["tree5"] * 10,
-            *["tree6"] * 3,
-            *["tree7"] * 2,
-            *["tree8"] * 4,
             # Ingrédients (80-84)
-            *["apple"] * 1,
-            *["carrot"] * 1,
-            *["radish"] * 1,
-            *["rice"] * 1,
-            *["wheat"] * 1,
             # Pierres (85-99)
-            *["rock1"] * 2,
-            *["rock2"] * 2,
-            *["rock3"] * 2,
-            *["rock4"] * 2,
-            *["rock5"] * 2,
-            *["rock6"] * 2,
-            *["rock7"] * 1,
-            *["rock8"] * 1,
-            *["rock9"] * 1,
-        ]:  # Total de 100
             prop = pygame.image.load("res/sprites/Props/%s.png" % path).convert_alpha()
             self.vegetation.append(prop)
             self.vegetation_size.append(
@@ -122,7 +150,7 @@ class World:
             #         "res/sprites/Props/shadow/%s.png" % path
             #     ).convert_alpha()
             # )
-            
+
         self.ingredients_range = range(80, 85)
 
         # Définir les paramètres de génération du terrain
@@ -132,6 +160,11 @@ class World:
         self.v_amplitude = 0.8  # Pour la végétation
         self.v_frequence = 0.08  # Pour la végétation
         self.render_distance = 50
+        self.render_distance_range = tuple(
+            (x, y)
+            for y in range(self.render_distance)
+            for x in range(self.render_distance)
+        )
 
         # Constantes d'affichage
         self.center = (self.render_distance - 3) // 2
@@ -149,7 +182,10 @@ class World:
 
         # Variables de base
         self.seed = randint(-10e4, 10e4)  # Ne pas aller au dessus (farlands)
-        self.coords = []
+        self.coords = [
+            [None for x in range(self.render_distance)]
+            for y in range(self.render_distance)
+        ]
 
         self.found_spawn()
 
@@ -168,26 +204,26 @@ class World:
         """
         while True:
             x, y = randint(-500, 500), randint(-500, 500)
-            h = self.process_coord(self.center, self.center, x, y)[3]
-            if not h > self.water_level:
+            height = self.process_coord(self.center, self.center, x, y)[3]
+            if not height > self.water_level:
                 self.spawn = (x, y)
                 return
 
-    def vegetation_check(self, x, y, vegetation_noise):
+    def vegetation_check(self, _x, _y, vegetation_noise):
         """
         La méthode  "vegetation_check" est appelée  à chaque fois qu'on souhaite
         savoir si la végétation est présente ou  non, ça simplifie la gestion de
         la récolte.
         """
         try:
-            return self.vegetation_data[x, y]
-        except:
+            return self.vegetation_data[_x, _y]
+        except KeyError:
             result = bool(round(vegetation_noise))
-            self.vegetation_data[x, y] = result
+            self.vegetation_data[_x, _y] = result
             return result
 
     @memoize
-    def process_coord(self, x, y, player_x, player_y):
+    def process_coord(self, _x, _y, player_x, player_y):
         """
         La méthode  "process_coord" prend en   entrée quatre coordonnées  (x, y)
         pour la position de la case et  (player_x, player_y) pour la position du
@@ -200,16 +236,16 @@ class World:
         La  méthode utilise  également  un décorateur de  mémoïsation "@memoize"
         pour éviter de recalculer les mêmes valeurs plusieurs fois.
         """
-        x_pos, y_pos = iso(x, y, self.offseted_x_center, self.offseted_y_center)
+        x_pos, y_pos = iso(_x, _y, self.offseted_x_center, self.offseted_y_center)
         terrain_noise = snoise2(
-            (x + player_x) * self.frequence,
-            (y + player_y) * self.frequence,
+            (_x + player_x) * self.frequence,
+            (_y + player_y) * self.frequence,
             base=self.seed,
         )
         vegetation_noise = (
             snoise2(
-                (x + player_x) * self.v_frequence,
-                (y + player_y) * self.v_frequence,
+                (_x + player_x) * self.v_frequence,
+                (_y + player_y) * self.v_frequence,
                 base=self.seed,
             )
             * self.v_amplitude
@@ -228,15 +264,10 @@ class World:
         une liste à deux dimensions. La méthode parcourt cette liste et applique
         la méthode "process_coord" à chaque coordonnée pour la mettre à jour.
         """
-        self.coords = [
-            [
-                self.process_coord(x, y, player_x, player_y)
-                for x in range(self.render_distance)
-            ]
-            for y in range(self.render_distance)
-        ]
+        for x, y in self.render_distance_range:
+            self.coords[y][x] = self.process_coord(x, y, player_x, player_y)
 
-    def get_sprites(self, player, tick):
+    def get_sprites(self, player, tick):  # pylint: disable= too-many-locals
         """
         La méthode  "get_sprites" calcule la   position de chaque  sprite (objet
         affichable)  sur l'écran en  fonction de  la  position  du  joueur. Elle
@@ -265,51 +296,48 @@ class World:
         terrain_sprites = []
         props_sprites = []
 
-        water_factor = -(tick * 0.06)
-
         for y, row in enumerate(self.coords):
             for x, column in enumerate(row):
                 x_pos, y_pos, vegetation_noise, terrain_noise = column
-                x_temp = x_pos - x_offset
-                y_temp = y_pos - y_offset
+                x_offseted = x_pos - x_offset
+                y_offseted = y_pos - y_offset
 
-                # Eau
+                # Ajout de l'eau si le terrain est en dessous de water_level
                 if terrain_noise > self.water_level:
                     terrain_sprites.append(
                         (
                             self.water,
-                            x_temp,
-                            y_temp
-                            - terrain_noise * self.amplitude
-                            + 29
-                            + 1.2
+                            x_offseted,
+                            y_offseted
+                            - terrain_noise * self.amplitude  # Annule le terrain noise
+                            + 29  # Offset de hauteur de l'eau
+                            + 1.4  # Amplitude de l'eau
                             * cos(
-                                water_factor
-                                + (int(player.pos.x) + x)
+                                tick
+                                + (int(player.pos.x) + x) * 0.8
                                 - (int(player.pos.y) + y)
                             ),
                         )
                     )
 
-                # Herbe
+                # Sinon ajout de l'herbe
                 else:
-                    terrain_sprites.append((self.block, x_temp, y_temp))
+                    terrain_sprites.append((self.block, x_offseted, y_offseted))
 
-                    # Vegetation
-                    if self.vegetation_check(
-                        int(player.pos.x) + x, int(player.pos.y) + y, vegetation_noise
-                    ):
+                    # Ajout de la végétation
+                    real_x = int(player.pos.x + x)
+                    real_y = int(player.pos.y + y)
+                    if self.vegetation_check(real_x, real_y, vegetation_noise):
                         index = int(
                             # Éviter le slicing pour soucis de performance.
                             str(vegetation_noise)[-2]
                             + str(vegetation_noise)[-1]
                         )
-                        vegetation_sprite = self.vegetation[index]
                         props_sprites.append(
                             (
-                                vegetation_sprite,
-                                x_temp,
-                                y_temp - self.vegetation_size[index],
+                                self.vegetation[index],
+                                x_offseted,
+                                y_offseted - self.vegetation_size[index],
                                 x,
                                 y,
                             )

@@ -1,3 +1,10 @@
+"""
+Ce module  contient une classe Fade pour créer des effets de fondu, utilisé pour
+l'animation au lancement du jeu  (rentré  dans le monde), pour l'assombrissement
+dans les menus et pour l'appareil photo. Ça rajoute un bel effet qui rend le jeu
+bien plus complet.
+"""
+
 #  ______  ______  _____   ______
 # /\  ___\/\  __ \/\  __-./\  ___\
 # \ \  __\\ \  __ \ \ \/\ \ \  __\
@@ -5,21 +12,38 @@
 #   \/_/    \/_/\/_/\/____/ \/_____/
 #
 
+# Pour pouvoir lancer le programme avec n'importe quel fichier
+if __name__ == "__main__":
+    from os.path import dirname, realpath, join
+    from subprocess import call
+    import sys
+
+    DIR_PATH = dirname(realpath(__file__))
+    call(["python3", join(DIR_PATH, "../main.py")])
+
+    sys.exit()
+
+# pylint: disable=too-many-arguments
+# pylint: disable=wrong-import-position
+# pylint: disable=too-few-public-methods
+
 import pygame
 
 
-# Création d'une fonction qui ne fait rien
 def nothing():
-    pass
+    """
+    Création d'une fonction qui ne fait rien.
+    """
+    return
 
 
 class Fade:
-    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
-    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
-    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
-    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
-    # attribut __dict__ pour la classe.
-    
+    """
+    La classe Fade a sa propre surface d'affichage qui n'est changé qu'une seule
+    fois,  ensuite  dans la méthode draw  c'est   là  où l'on l'applique  sur la
+    surface du jeu avec une certaine transparence.
+    """
+
     __slots__ = (
         # Surfaces
         "surf",
@@ -39,10 +63,12 @@ class Fade:
         self.display.fill(color)
 
         # Variables
-        self.alpha = 0
         self.active = False
-        self.direction = 1
+
+        self.alpha = 0
+        self.direction = 1  # 1 ou -1
         self.speed = speed
+
         self.func = nothing
 
     def draw(self, surf):

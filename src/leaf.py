@@ -1,24 +1,44 @@
-﻿#  __      ______  ______  ______
+﻿"""
+Ce module comprend la classe Leaf qui correspond a une feuille, cet effet en jeu
+rend très bien car il donne une impression de vie et de mouvement avec le vent. 
+"""
+
+#  __      ______  ______  ______
 # /\ \    /\  ___\/\  __ \/\  ___\
 # \ \ \___\ \  __\\ \  __ \ \  __\
 #  \ \_____\ \_____\ \_\ \_\ \_\
 #   \/_____/\/_____/\/_/\/_/\/_/
 #
 
+# Pour pouvoir lancer le programme avec n'importe quel fichier
+if __name__ == "__main__":
+    from os.path import dirname, realpath, join
+    from subprocess import call
+    import sys
+
+    DIR_PATH = dirname(realpath(__file__))
+    call(["python3", join(DIR_PATH, "../main.py")])
+
+    sys.exit()
+
+# pylint: disable=invalid-name
+# pylint: disable=wrong-import-position
+# pylint: disable=too-few-public-methods
+# pylint: disable=too-many-instance-attributes
+
 from random import randint, choice, uniform
-from src.tools.files import get_images
-from src.tools.memoize import memoize
-from src.tools.resize import resize
 import pygame
+from src.tools.files import get_images
+from src.tools.resize import resize
 
 
 class Leaf:
-    # Pourquoi utiliser  `__slots__` ? La réponse  courte est que les slots sont
-    # plus efficaces en termes d'espace mémoire et de vitesse d'accès, et un peu
-    # plus sûrs que la méthode d'accès aux   données  par défaut de  Python. Par
-    # défaut, lorsque Python crée une nouvelle instance d'une classe, il crée un
-    # attribut __dict__ pour la classe.
-    
+    """
+    La classe   Leaf représente un objet de  type  feuille tombante dans un jeu.
+    Elle comprend des attributs de position,   d'affichage    et   de mouvement,
+    ainsi qu'une méthode de mise à jour de sa position et de sa rotation.
+    """
+
     __slots__ = (
         # Position
         "x",

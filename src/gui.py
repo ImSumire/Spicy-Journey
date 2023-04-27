@@ -167,7 +167,7 @@ class Gui:
         elif os.name == "posix":  # Pour Linux ou macOS
             subprocess.Popen(["xdg-open", path])
         else:
-            raise OSError
+            print("Your os is unsupported, go to ./screenshots/")
 
     def draw(self):
         """

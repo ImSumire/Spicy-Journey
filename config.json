@@ -5,16 +5,4 @@
         "height": 700
     },
     "fps": 60,
-    "software": {
-        "dimensions": {
-            "scale": 2,
-            "hp": 256,
-            "wp": 256
-        },
-        "colors": {
-            "background": "#262626",
-            "primaryColor": "#2e2e2e",
-            "white": "#ffffff"
-        }
-    }
 }

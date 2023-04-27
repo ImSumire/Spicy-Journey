@@ -22,7 +22,10 @@ if __name__ == "__main__":
 
     sys.exit()
 
+# pylint: disable=wrong-import-order
 # pylint: disable=wrong-import-position
+# pylint: disable=consider-using-f-string
+# pylint: disable=too-many-instance-attributes
 
 # J'utilise le multithreading pour charger plus rapidement les musiques et sons,
 # ça passe de  0.5 secondes à 0.03, ce qui est très important pour le comfort au

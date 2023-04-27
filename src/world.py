@@ -21,8 +21,9 @@ if __name__ == "__main__":
 
     sys.exit()
 
-# pylint: disable= invalid-name
-# pylint: disable= wrong-import-position
+# pylint: disable=invalid-name
+# pylint: disable=wrong-import-position
+# pylint: disable=consider-using-f-string
 
 import csv
 from math import cos
@@ -127,7 +128,7 @@ class World:  # pylint: disable= too-many-instance-attributes
         self.vegetation_list = []
         self.ingredients_list = ["rice", "apple", "carrot", "radish", "wheat"]
 
-        with open("res/vegetation.csv", "r") as file:
+        with open("res/vegetation.csv", "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             next(reader)  # saute la première ligne
             for row in reader:

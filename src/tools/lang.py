@@ -39,9 +39,3 @@ def load_lang(file):
             words[key] = valeur
 
     return words
-
-if __name__ == '__main__':
-    words = load_lang('en.lang')
-
-    print(words['accessibility.disableTTS']) # affiche 'Text To Speech disabled'
-    print(words['accessibility.enableTTS']) # affiche 'Text To Speech enabled'

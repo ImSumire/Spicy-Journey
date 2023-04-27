@@ -22,6 +22,7 @@ if __name__ == "__main__":
 
 # pylint: disable=no-member
 # pylint: disable=invalid-name
+# pylint: disable=duplicate-code
 # pylint: disable=too-many-arguments
 # pylint: disable=consider-using-with
 # pylint: disable=wrong-import-position

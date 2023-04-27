@@ -14,6 +14,7 @@ ainsi que du module 'src.tools.files' pour la récupération d'images.
 #   \/_/    \/_____/\/_/\/_/\/_____/\/_____/\/_/ /_/
 #
 
+# pylint: disable=duplicate-code
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join
@@ -26,7 +27,6 @@ if __name__ == "__main__":
     sys.exit()
 
 # pylint: disable=invalid-name
-# pylint: disable=duplicate-code
 # pylint: disable=no-name-in-module
 # pylint: disable=wrong-import-position
 # pylint: disable= c-extension-no-member

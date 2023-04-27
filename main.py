@@ -59,7 +59,7 @@ from src.gui import Gui
 ### Création des constantes à partir du fichier config.json
 
 # Charge les données du fichier config grâce à la librairie json
-with open("config.json") as f:
+with open("config.json", encoding="utf-8") as f:
     CONFIG = json.load(f)
 
 # Définition des constantes à partir du fichier config

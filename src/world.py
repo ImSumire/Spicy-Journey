@@ -127,7 +127,7 @@ class World:  # pylint: disable= too-many-instance-attributes
         # Vegetation data
         self.vegetation_size = []
         self.vegetation_list = []
-        self.ingredients_list = ["rice", "apple", "carrot", "radish", "wheat"]
+        self.ingredients_list = ["radish", "rice", "apple", "mushroom", "carrot", "wheat"]
 
         with open("res/vegetation.csv", "r", encoding="utf-8") as file:
             reader = csv.reader(file)
@@ -327,8 +327,8 @@ class World:  # pylint: disable= too-many-instance-attributes
                     terrain_sprites.append((self.block, x_offseted, y_offseted))
 
                     # Ajout de la végétation
-                    real_x = int(player.pos.x + x)
-                    real_y = int(player.pos.y + y)
+                    real_x = int(player.pos.x) + x
+                    real_y = int(player.pos.y) + y
                     if self.vegetation_check(real_x, real_y, vegetation_noise):
                         index = int(
                             # Éviter le slicing pour soucis de performance.

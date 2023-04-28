@@ -28,6 +28,8 @@ if __name__ == "__main__":
 # pylint: disable=consider-using-f-string
 # pylint: disable=too-many-instance-attributes
 
+from os.path import realpath
+
 # J'utilise le multithreading pour charger plus rapidement les musiques et sons,
 # ça passe de  0.5 secondes à 0.03, ce qui est très important pour le comfort au
 # démarrage.
@@ -36,7 +38,7 @@ import threading
 from random import shuffle, randint
 from pygame import mixer
 
-from time import perf_counter
+from src.tools.memoize import memoize
 
 mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=512)
 
@@ -47,18 +49,20 @@ class Mixer:
     leurs utilisations.
     """
     def __init__(self):
-        start = perf_counter()
+        self.playing_music = True
+        self.playing_ambient = True
+
 
         self.musics = [
             "Avril-14th",
             "Bluebird",
-            "La-valse-dAmélie",
+            "La-valse-dAmelie",
             "Last-Carnival",
             "Secret-OST",
             "Song-on-the-Beach",
         ]
 
-        # Musique au début
+        # Mélange dans l'ordre des musiques
         shuffle(self.musics)
 
         # Lancement de la première musique
@@ -73,13 +77,13 @@ class Mixer:
 
         # Ambience avec les oiseaux
         self.ambience_thread = threading.Thread(
-            target=self.loop_sound, args=("res/sound/ambience.mp3",)
+            target=self.loop_sound, args=("res/sound/ambience.wav",)
         )
         self.ambience_thread.start()
 
         # Son de vent
         self.wind_thread = threading.Thread(
-            target=self.loop_sound, args=("res/sound/wind.mp3",)
+            target=self.loop_sound, args=("res/sound/wind.wav",)
         )
         self.wind_thread.start()
 
@@ -96,16 +100,14 @@ class Mixer:
                 "res/sound/paper/8.wav",
                 "res/sound/paper/9.wav",
             ]
+            if self.load_sound(path)
         ]
 
         # Son de pok quand un ingrédient est récolté
-        self.pok = mixer.Sound("res/sound/pok.mp3")
-        self.pok.set_volume(0.3)
+        self.pok = self.load_sound("res/sound/pok.wav")
 
         # Son de l'appareil photo
-        self.photo_sound = mixer.Sound("res/sound/photo.wav")
-
-        print(perf_counter() - start)
+        self.photo_sound = self.load_sound("res/sound/photo.wav")
 
     @staticmethod
     def load_music(filename):
@@ -133,13 +135,22 @@ class Mixer:
         sound.play(loops=-1)
 
     @staticmethod
+    @memoize
     def load_sound(filename):
         """
-        Retourne le son choisie avec un volume de 40%.
+        Retourne le  son choisie avec  un volume de 40%. Nous  utilisons un  try
+        pour  éviter une  erreur au  début car  certaines versions  de python ne
+        veulent pas ouvrir des fichiers de musique :
+        stackoverflow.com/questions/14845896/pygame-cannot-open-sound-file
+        Normalement ça a été fixé mais nous le laissons au cas où...
         """
-        sound = mixer.Sound(filename)
-        sound.set_volume(0.4)
-        return sound
+        try:
+            sound = mixer.Sound(filename)
+            sound.set_volume(0.4)
+            return sound
+        except:
+            print("Unable to open file '%s'" % filename)
+            return None
 
     @staticmethod
     def play():
@@ -154,13 +165,13 @@ class Mixer:
         """
         # Ambience avec les oiseaux
         ambience_thread = threading.Thread(
-            target=self.loop_sound, args=("res/sound/ambience.mp3",)
+            target=self.loop_sound, args=("res/sound/ambience.wav",)
         )
         ambience_thread.start()
 
         # Son de vent
         wind_thread = threading.Thread(
-            target=self.loop_sound, args=("res/sound/wind.mp3",)
+            target=self.loop_sound, args=("res/sound/wind.wav",)
         )
         wind_thread.start()
 
@@ -182,4 +193,4 @@ class Mixer:
         """
         Joue un son aléatoire de page qui tourne.
         """
-        self.page[randint(0, 8)].play()
+        self.page[randint(0, len(self.page) - 1)].play()

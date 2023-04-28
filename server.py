@@ -19,6 +19,7 @@ from traceback import print_exc
 
 # pylint: disable=invalid-name
 # pylint: disable=broad-except
+# pylint: disable=consider-using-f-string
 
 # Initialisation de la socket du serveur
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,7 +55,7 @@ def name_check(_name):
         return False
     if _name.isspace():
         return False
-    if any(_name in players[id] for id in players):
+    if any(_name in players.items()):
         return False
     return True
 

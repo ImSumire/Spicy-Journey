@@ -19,6 +19,7 @@ back=Back
 
 book.next=Next page
 book.prev=Previous page
+book.cook=Cook !
 
 menu.open=Open menu
 menu.close=X

@@ -21,6 +21,7 @@ modules, il créé les instances de base et lance le jeu dans une boucle while.
 
 # Benchmark : `python3 -m cProfile -s tottime main.py > exit.txt`
 
+#pylint: disable=duplicate-code
 __inspiration__ = (
     "Ghibli",  # Pour le style graphique
     "Minecraft",  # Pour la génération du monde

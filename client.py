@@ -24,6 +24,7 @@ pour pouvoir jouer, s'il n'est pas démarré demandez à : Zecter#2847 sur Disco
 
 # Benchmark : `python3 -m cProfile -s tottime main.py > exit.txt`
 
+# pylint: disable=duplicate-code
 __inspiration__ = (
     "Ghibli",  # Pour le style graphique
     "Minecraft",  # Pour la génération du monde

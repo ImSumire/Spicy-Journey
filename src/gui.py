@@ -1,5 +1,6 @@
 """
-Doc
+Ce  module  comporte  la  classe  GUI (Graphical  User Interface)  qui  comprend
+l'ensemble de la gestion de l'interface. 
 """
 
 #  ______  __  __  __
@@ -61,7 +62,8 @@ FONT = pygame.font.Font("res/font/8-bit.ttf", 12)
 
 class Gui:
     """
-    Doc
+    Cette classe  comporte la gestion de l'interface. Elle gère les boutons, le
+    logo, le livre de recette, les feuilles tombantes et les rayons de soleil.
     """
 
     def __init__(self, width, height, surf, display, player, world):
@@ -112,6 +114,8 @@ class Gui:
         self.content = []
         self.title()
 
+        self.take_picture = False
+
         # Écran de débogage
         self.debug = False
 
@@ -119,7 +123,9 @@ class Gui:
 
     def load_recipes(self):
         """
-        Doc
+        Cette méthode  a pour but de charger des recettes depuis le dictionnaire
+        de recettes et de les formater  et  traduire pour les rendre utilisables
+        dans le livre des recettes.
         """
         # Création de la liste de recettes
         self.recipes = []
@@ -171,7 +177,11 @@ class Gui:
 
     def draw(self):
         """
-        Doc
+        Ce méthode affiche l'interface graphique du jeu:
+        - Les feuilles (et mise à jour au passage)
+        - L'écran de jeu
+        - Les rayons de soleil
+        - ...
         """
         # Affichage des feuilles
         for leaf in self.leaves:
@@ -209,27 +219,32 @@ class Gui:
                 (self.width - 100, 30 + 52 * index),
             )
 
+        if self.take_picture:
+            pygame.image.save(
+                self.surf,
+                "screenshots/%s.png"
+                % str(datetime.now()).replace(" ", "_").replace(":", "."),
+                # 2023-04-07_10.53.20.638260
+                # année-mois-jour_heure.minute.seconde.microseconde
+            )
+            self.photo_fade.active = True
+            self.take_picture = False
+
     # Lancer le jeu après l'écran titre
     def start(self):
         """
-        Doc
+        Lance le  jeu en faisant commencer  le  fondu et en mettant en paramètre
+        d'animation la fonction qui démarre le jeu à l'entrée dans le monde.
         """
         self.fade.active = True
         self.fade.func = self.main
 
     def take_photo(self):
         """
-        Doc
+        Prend une photo.
         """
         self.mixer.photo_sound.play()
-        pygame.image.save(
-            self.surf,
-            "screenshots/%s.png"
-            % str(datetime.now()).replace(" ", "_").replace(":", "."),
-            # 2023-04-07_10.53.20.638260
-            # année-mois-jour_heure.minute.seconde.microseconde
-        )
-        self.photo_fade.active = True
+        self.take_picture = True
 
     #  __  __  __
     # /\ \/\ \/\ \
@@ -239,12 +254,23 @@ class Gui:
     #
 
     # Le code ci-dessous est assez en bazarre, il ne fait qu'appliquer une liste
-    # de boutons et images dans le contenue de l'interface.
+    # de boutons et images dans le contenue de l'interface. Veuillez ne pas vous
+    # casser la tête avec...
 
     # Écran titre
     def title(self):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │                                         │
+        │                 ┌────┐                  │
+        │                 │ Lo │                  │
+        │                 │ go │                  │
+        │                 └────┘                  │
+        │           Enter in the world            │
+        │                Settings                 │
+        │                                         │
+        │                                         │
+        └─────────────────────────────────────────┘
         """
         self.ui_fade.active = False
         self.content = [
@@ -259,7 +285,17 @@ class Gui:
 
     def book_ui(self, page=0):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │                                         │
+        │               ┌─────────┐               │
+        │               │         │               │
+        │               │         │               │
+        │         Prev  │         │  Next         │
+        │               │         │               │
+        │               └─────────┘               │
+        │                  Close                  │
+        │                                         │
+        └─────────────────────────────────────────┘
         """
         self.mixer.page_sound()
         self.ui_fade.active = True
@@ -290,7 +326,17 @@ class Gui:
     # Paramètres avec ou sans retour à l'écran titre
     def settings_ui(self, title: bool = False):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │                                         │
+        │                                         │
+        │            Musique : Active             │
+        │            Langue: Français             │ (il y a les autre
+        │            Rayons de soleil             │ paramètres aussi)
+        │                Feuilles                 │
+        │                                         │
+        │                  Back                   │
+        │                                         │
+        └─────────────────────────────────────────┘
         """
         self.ui_fade.active = True
         self.player.move = False
@@ -401,10 +447,20 @@ class Gui:
             ),
         ]
 
-    # Menu principal sans animation
+    # Menu principal sans animation de bouton
     def main(self):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │ (sans animation)
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                    Open │
+        └─────────────────────────────────────────┘
         """
         self.ui_fade.active = False
         self.player.exist = self.player.move = True
@@ -415,7 +471,17 @@ class Gui:
     # Menu principal fermé
     def menu_closed(self):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │ (avec animation)
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                    Open │
+        └─────────────────────────────────────────┘
         """
         self.ui_fade.active = False
         self.content = [
@@ -429,7 +495,17 @@ class Gui:
     # Menu principal ouvert
     def menu_opened(self):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                   ... ... ... ... Close │
+        └─────────────────────────────────────────┘
         """
         self.ui_fade.active = False
         self.content = [
@@ -445,7 +521,17 @@ class Gui:
     # Dessinez chaque ligne de l'écran de débogage
     def draw_debug(self, tick, seconds, fps):
         """
-        Doc
+        ┌─────────────────────────────────────────┐
+        │x: 124                                   │
+        │y: 807                                   │
+        │z: 2.3                                   │
+        │seed: -2543                              │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        │                                         │
+        └─────────────────────────────────────────┘
         """
         x, y = self.player.pos
         pos = self.world.coords[self.world.center + round(y - int(y))][

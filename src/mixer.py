@@ -12,6 +12,7 @@ rapidement les musiques et les sons.
 #
 
 # pylint: disable=duplicate-code
+# pylint: disable=ungrouped-imports
 # Pour pouvoir lancer le programme avec n'importe quel fichier
 if __name__ == "__main__":
     from os.path import dirname, realpath, join
@@ -148,6 +149,7 @@ class Mixer:
             sound = mixer.Sound(filename)
             sound.set_volume(0.4)
             return sound
+        # pylint: disable=bare-except
         except:
             print("Unable to open file '%s'" % filename)
             return None

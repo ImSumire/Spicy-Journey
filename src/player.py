@@ -96,6 +96,7 @@ class Player:
 
         # Inventaire
         self.inventory = {}
+        self.dishes = set()
 
     def switch(self):
         """

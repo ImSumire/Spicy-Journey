@@ -1,6 +1,6 @@
 """
 Ce  module  comporte  la  classe  GUI (Graphical  User Interface)  qui  comprend
-l'ensemble de la gestion de l'interface. 
+l'ensemble de la gestion de l'interface.
 """
 
 #  ______  __  __  __
@@ -100,6 +100,8 @@ class Gui:
 
         self.back = (width // 2, height - 80)
 
+        self.cook_place = (width // 2, height - 125)
+
         self.menu = (width - 80, height - 25)
         self.photo = (width - 175, height - 25)
         self.cook = (width - 300, height - 25)
@@ -109,17 +111,23 @@ class Gui:
         # Constantes d'éléments
         self.logo = Image("res/sprites/logo.png", (width // 2 - 149, 80))
         self.book = Image("res/sprites/book.png", (width // 2 - 187, 80))
+        self.check = Image("res/sprites/check.png", (width // 2 + 20, 380))
 
         # Contenues
         self.content = []
         self.title()
 
+        # Screenshot
         self.take_picture = False
 
         # Écran de débogage
         self.debug = False
 
+        # Recettes
         self.load_recipes()
+        self.load_ingredients()
+
+    ### Gestion des recettes
 
     def load_recipes(self):
         """
@@ -127,11 +135,15 @@ class Gui:
         de recettes et de les formater  et  traduire pour les rendre utilisables
         dans le livre des recettes.
         """
-        # Création de la liste de recettes
+        # Création de la liste de recettes (en format texte)
+        self.recipes_text = []
+        # et en format liste
         self.recipes = []
 
         # Parcours du dictionnaire de recettes
         for key, ingredients in recipes.items():
+            self.recipes.append(ingredients)
+
             # Formatage de chaque recette
             # recipe = self.lang[key] + "\n\n"
             recipe = key + "\n\n"
@@ -146,9 +158,12 @@ class Gui:
                     recipe += "- " + self.lang[ingredient] + "\n"
 
             # Ajout de la recette formatée à la liste
-            self.recipes.append(recipe)
+            self.recipes_text.append(recipe)
 
-        # Ingrédients
+    def load_ingredients(self):
+        """
+        Cette méthode enregistre dans dictionnaire les images des ingrédients.
+        """
         self.ingredient_images = {}
         for ingredient in self.world.ingredients_list:
             self.ingredient_images[ingredient] = resize(
@@ -157,6 +172,38 @@ class Gui:
                 ).convert_alpha(),
                 1.4,
             )
+
+    @staticmethod
+    def can_cook(inv, _recipe):
+        """
+        Vérifie si le plat peut être cuisiné.
+        """
+        for ingredient in set(_recipe):
+            if ingredient not in inv or _recipe.count(ingredient) > inv[ingredient]:
+                return False
+        return True
+
+    def cooking(self, _page):
+        """
+        Supprime les ingrédients de l'inventaire et ajoute le plat.
+        """
+        # Récupération de la liste des ingrédients
+        _recipe = self.recipes[_page]
+
+        # Parcours les ingrédients de la recette
+        for ingredient in set(_recipe):
+            if ingredient in self.player.inventory:
+                # Enlever les ingrédients
+                self.player.inventory[ingredient] -= _recipe.count(ingredient)
+                # Éviter de laisser des valeurs vides dans l'inventaire
+                if self.player.inventory[ingredient] == 0:
+                    del self.player.inventory[ingredient]
+                # Ajout du plat
+                self.player.dishes.add(_page)
+        self.book_ui(page=_page)
+
+
+    ### Gestion des screenshoots et album
 
     @staticmethod
     def open_dir():
@@ -174,6 +221,15 @@ class Gui:
             subprocess.Popen(["xdg-open", path])
         else:
             print("Your os is unsupported, go to ./screenshots/")
+
+    def take_photo(self):
+        """
+        Prend une photo.
+        """
+        self.mixer.photo_sound.play()
+        self.take_picture = True
+
+    ### Affichage
 
     def draw(self):
         """
@@ -239,13 +295,6 @@ class Gui:
         self.fade.active = True
         self.fade.func = self.main
 
-    def take_photo(self):
-        """
-        Prend une photo.
-        """
-        self.mixer.photo_sound.play()
-        self.take_picture = True
-
     #  __  __  __
     # /\ \/\ \/\ \
     # \ \ \_\ \ \ \
@@ -310,18 +359,28 @@ class Gui:
                 self.lang["book.next"],
                 (self.width // 2 + 300, self.height // 2 + 120),
                 lambda: self.book_ui(page + 1)
-                if page < len(self.recipes) - 1
+                if page < len(self.recipes_text) - 1
                 else nothing,
             ),
             self.book,
             Text(
-                self.recipes[page],
+                self.recipes_text[page],
                 (500, 120),
                 (0, 0, 0),
                 300,
             ),
             Button(self.lang["close"], self.back, self.main),
         ]
+        if self.can_cook(self.player.inventory, self.recipes[page]):
+            self.content.append(
+                Button(
+                    self.lang["book.cook"],
+                    self.cook_place,
+                    lambda: self.cooking(page),
+                )
+            )
+        if page in self.player.dishes:
+            self.content.append(self.check)
 
     # Paramètres avec ou sans retour à l'écran titre
     def settings_ui(self, title: bool = False):

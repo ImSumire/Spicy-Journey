@@ -4,6 +4,7 @@
   <img alt="Version 0.1.9" src="https://img.shields.io/badge/Version-0.1.9-53d0a2">
   <img alt="Licence GNU" src="https://img.shields.io/badge/Licence-GNU-fb7f53">
   <img alt="Pylint" src="https://github.com/ImSumire/Spicy-Journey/actions/workflows/pylint.yml/badge.svg?branch=main">
+  <img alt="Code style: black" src="https://img.shields.io/badge/Code%20Style-black-000000.svg">
 </h1>
 
 <img alt="Logo" src="https://raw.githubusercontent.com/ImSumire/Spicy-Journey/main/res/sprites/logo.png" align=right>
